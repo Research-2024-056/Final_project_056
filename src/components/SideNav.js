@@ -67,7 +67,7 @@ function SideNav({ open, handleDrawerClose }) {
 
                     }
                 }}>
-                    <ListItemButton>
+                    <ListItemButton to='/'>
                         <ListItemIcon>
                             <InsightsIcon sx={{ color: "#ffffff" }} />
                         </ListItemIcon>
@@ -90,8 +90,9 @@ function SideNav({ open, handleDrawerClose }) {
                         backgroundColor: '#333a48',
 
                     }
+                  
                 }}>
-                    <ListItemButton>
+                    <ListItemButton to='/PreProductionMain'>
                         <ListItemIcon>
                             <GridViewIcon sx={{ color: "#ffffff" }} />
                         </ListItemIcon>
