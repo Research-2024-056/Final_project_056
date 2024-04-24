@@ -13,7 +13,7 @@ const steps = ['Input Fabric', 'Processing', 'Get Durability'];
 
 function Durability_check() {
 
-    
+
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
@@ -38,8 +38,8 @@ function Durability_check() {
     const newActiveStep =
       isLastStep() && !allStepsCompleted()
         ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
+        // find the first step that has been completed
+        steps.findIndex((step, i) => !(i in completed))
         : activeStep + 1;
     setActiveStep(newActiveStep);
   };
@@ -66,10 +66,10 @@ function Durability_check() {
 
   return (
     <PageMain>
-      <Typography Heading sx={{letterSpacing:".130rem", color:"#818ea3",fontSize:".625rem" }}>
+      <Typography Heading sx={{ letterSpacing: ".130rem", color: "#818ea3", fontSize: ".625rem" }}>
         DASHBOARD
       </Typography>
-      <Typography Heading sx={{ lineHeight:1,fontWeight:"500",fontSize:"1.625rem",fontFamily:"poppins" , marginBottom:"60px"}}>
+      <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.625rem", fontFamily: "poppins", marginBottom: "60px" }}>
         Durability check
       </Typography>
 
@@ -96,87 +96,87 @@ function Durability_check() {
             </React.Fragment>
           ) : (
             <React.Fragment>
-             
+
               {activeStep === 0 && (
                 <React.Fragment >
-                    <center>
-                    <Typography Heading sx={{ lineHeight:1,fontWeight:"500",fontSize:"1.425rem",fontFamily:"poppins" , marginTop:"60px"}}>
-        Provide the Details Which you need to procceed with 
-      </Typography>
-      <TextField
-          id="outlined-password-input"
-          label="Enter The Fabric"
-          type="text"
-          autoComplete="current-password"
-          sx={{
-            width:"60%",
-            marginTop:"35px"
-          }}
-        />
-        <Typography Heading sx={{ lineHeight:1,fontWeight:"500",fontSize:"18px",fontFamily:"poppins" , marginTop:"60px"}}>
-        *Provide the name of the fabric which you need to check for the durability
-      </Typography>
-                   </center>
+                  <center>
+                    <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.425rem", fontFamily: "poppins", marginTop: "60px" }}>
+                      Provide the Details Which you need to procceed with
+                    </Typography>
+                    <TextField
+                      id="outlined-password-input"
+                      label="Enter The Fabric"
+                      type="text"
+                      autoComplete="current-password"
+                      sx={{
+                        width: "60%",
+                        marginTop: "35px"
+                      }}
+                    />
+                    <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "18px", fontFamily: "poppins", marginTop: "60px" }}>
+                      *Provide the name of the fabric which you need to check for the durability
+                    </Typography>
+                  </center>
                 </React.Fragment>
               )}
               {activeStep === 1 && (
                 <React.Fragment >
-                <center>
-                <Typography Heading sx={{ lineHeight:1,fontWeight:"500",fontSize:"1.425rem",fontFamily:"poppins" , marginTop:"60px" }}>
-    Working On Progress
-  </Typography>
-  
-          <img alt='gif' mt='10px' src='https://i.gifer.com/CVyf.gif' width="290px"></img>
-               </center>
-            </React.Fragment>
+                  <center>
+                    <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.425rem", fontFamily: "poppins", marginTop: "60px" }}>
+                      Working On Progress
+                    </Typography>
+
+                    <img alt='gif' mt='10px' src='https://i.gifer.com/CVyf.gif' width="290px"></img>
+                  </center>
+                </React.Fragment>
               )}
               {activeStep === 2 && (
                 <React.Fragment >
-                <center>
-                <Typography Heading sx={{ lineHeight:1,fontWeight:"500",fontSize:"1.425rem",fontFamily:"poppins" , marginTop:"60px" }}>
-Durability For Cotton Is 
-  </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px' }}>
-  <Box
-    sx={{
-      position: 'relative',
-      display: 'inline-flex',
-      width: 150,
-      height: 150,
-    }}
-  >
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 120,
-        height: 120,
-        borderRadius: '50%',
-        border: '2px solid #f50057',
-        position: 'relative',
-        zIndex: 2,
-        animation: 'progressBar 4s linear infinite', // Apply the animation
-      }}
-    >
-      <Typography
-        sx={{
-          fontFamily: 'poppins',
-          fontSize: '35px',
-          color: '#f50057',
-        }}
-      >
-        75%
-      </Typography>
-    </Box>
-  </Box>
-</Box>
+                  <center>
+                    <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.425rem", fontFamily: "poppins", marginTop: "60px" }}>
+                      Durability For Cotton Is
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px' }}>
+                      <Box
+                        sx={{
+                          position: 'relative',
+                          display: 'inline-flex',
+                          width: 150,
+                          height: 150,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 120,
+                            height: 120,
+                            borderRadius: '50%',
+                            border: '2px solid #f50057',
+                            position: 'relative',
+                            zIndex: 2,
+                            animation: 'progressBar 4s linear infinite', // Apply the animation
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: 'poppins',
+                              fontSize: '35px',
+                              color: '#f50057',
+                            }}
+                          >
+                            75%
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
 
 
-               </center>
-            </React.Fragment>
+                  </center>
+                </React.Fragment>
               )}
-              <Box sx={{ display: 'flex', flexDirection: 'row', paddingTop:"200px" }}>
+              <Box sx={{ display: 'flex', flexDirection: 'row', paddingTop: "200px" }}>
                 <Button
                   color="inherit"
                   disabled={activeStep === 0}

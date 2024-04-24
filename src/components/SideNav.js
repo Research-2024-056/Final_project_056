@@ -113,7 +113,7 @@ function SideNav({ open, handleDrawerClose }) {
 
                     }
                 }}>
-                    <ListItemButton>
+                    <ListItemButton to='/WorkforceMapDash'>
                         <ListItemIcon>
                             < WorkspacePremiumIcon sx={{ color: "#ffffff" }} />
                         </ListItemIcon>
