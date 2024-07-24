@@ -13,6 +13,7 @@ import Dynamic_seat_planner from "./pages/WorkforceMap_component/Dynamic_seat_pl
 import Labor_efficiency_analysis from "./pages/WorkforceMap_component/Labor_efficiency_analysis";
 
 
+
 function App() {
   return (
     <BRouter>

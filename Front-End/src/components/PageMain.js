@@ -70,16 +70,16 @@ export default function PageMain({ children }) {
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
-     setAnchorElUser(event.currentTarget);
-   };
- 
-   const handleCloseUserMenu = () => {
-     setAnchorElUser(null);
-   };
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{ backgroundColor: 'rgb(242,242,242,0.2)' }}>
+      <AppBar position="fixed" open={open} sx={{ backgroundColor: 'rgb(255,255,255)' }}>
         <Toolbar>
           <Grid container spacing={2}>
             <Grid item xs={1} lg={1}>
@@ -101,9 +101,9 @@ export default function PageMain({ children }) {
                 lg: open ? "block" : "block",
                 xs: open ? "none" : "block",
               }}
-              
+
             >
-              <Box sx={{marginLeft:{lg:open ?'-110px':'-60px'}}}>
+              <Box sx={{ marginLeft: { lg: open ? '-110px' : '-60px' } }}>
                 <InputBase
                   sx={{ ml: 1, flex: 1, fontSize: "14px" }}
                   placeholder="Search Here"
@@ -129,99 +129,99 @@ export default function PageMain({ children }) {
                   },
                 }}
               >
-                <Avatar sx={{cursor:'pointer'}} alt="Travis Howard" src="/static/images/avatar/2.jpg" onClick={handleOpenUserMenu} />
+                <Avatar sx={{ cursor: 'pointer' }} alt="Travis Howard" src="/static/images/avatar/2.jpg" onClick={handleOpenUserMenu} />
                 <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                    sx={{
-                      ...(Boolean(anchorElUser) && {
-                        boxShadow: "0px 4px 6px -2px #10182808",
-                      }),
-                      mt: "45px",
-                      "& .MuiMenu-list": {
-                        minWidth: "auto",
-                      },
-                      ".MuiPopover-paper": {
-                        boxShadow:
-                          "0px 4px 6px -2px #10182808, 0px 12px 16px -4px #10182814",
-                        width: "auto",
-                        minWidth: "245px",
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                  sx={{
+                    ...(Boolean(anchorElUser) && {
+                      boxShadow: "0px 4px 6px -2px #10182808",
+                    }),
+                    mt: "45px",
+                    "& .MuiMenu-list": {
+                      minWidth: "auto",
+                    },
+                    ".MuiPopover-paper": {
+                      boxShadow:
+                        "0px 4px 6px -2px #10182808, 0px 12px 16px -4px #10182814",
+                      width: "auto",
+                      minWidth: "245px",
+                      borderRadius: "6px",
+                      marginTop: "8px",
+                      paddingLeft: "8px",
+                      paddingRight: "8px",
+                      border: "1px solid #EAECF0",
+                      backgroundColor: "#ffffff",
+                      "& .MuiMenuItem-root:hover": {
+                        backgroundColor: "#EAECF0",
                         borderRadius: "6px",
-                        marginTop: "8px",
-                        paddingLeft: "8px",
-                        paddingRight: "8px",
-                        border: "1px solid #EAECF0",
-                        backgroundColor: "#ffffff",
-                        "& .MuiMenuItem-root:hover": {
-                          backgroundColor:"#EAECF0",
-                          borderRadius: "6px",
-                        },
                       },
-                    }}
-                  >
-                    <Grid container marginLeft={{lg:'8px',xs:'8px'}} marginTop="4px">
-                      <Grid item xs="auto">
-                        <IconButton sx={{ p: 0 }}>
+                    },
+                  }}
+                >
+                  <Grid container marginLeft={{ lg: '8px', xs: '8px' }} marginTop="4px">
+                    <Grid item xs="auto">
+                      <IconButton sx={{ p: 0 }}>
                         <Avatar width="38px"
-                            height="38px" alt="Travis Howard" src="/static/images/avatar/2.jpg"  />
-                          
-                        </IconButton>
-                      </Grid>
-                      <Grid item xs="auto" marginLeft="12px">
-                       
-                        <Typography
-                          sx={{
-                            color:"black",
-                            marginTop:'8px'
-                          }}
-                        >
-                          User Name
-                        </Typography>
-                      </Grid>
+                          height="38px" alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+
+                      </IconButton>
                     </Grid>
-                    
-                    <MenuItem
-                          key={"vp"}
-                         sx={{marginTop:'16px'}}
+                    <Grid item xs="auto" marginLeft="12px">
+
+                      <Typography
+                        sx={{
+                          color: "black",
+                          marginTop: '8px'
+                        }}
+                      >
+                        User Name
+                      </Typography>
+                    </Grid>
+                  </Grid>
+
+                  <MenuItem
+                    key={"vp"}
+                    sx={{ marginTop: '16px' }}
+                  >
+                    <Grid container>
+
+                      <Grid item xs="auto" marginLeft={theme.space_2}>
+                        <Typography
+
                         >
-                          <Grid container>
-                            
-                            <Grid item xs="auto" marginLeft={theme.space_2}>
-                              <Typography
-                                
-                              >
-                                My Profile
-                              </Typography>
-                            </Grid>{" "}
-                          </Grid>
-                        </MenuItem>
-                        <MenuItem
-                          key={"vs"}
-                         
+                          My Profile
+                        </Typography>
+                      </Grid>{" "}
+                    </Grid>
+                  </MenuItem>
+                  <MenuItem
+                    key={"vs"}
+
+                  >
+                    <Grid container>
+
+                      <Grid item xs="auto" marginLeft={theme.space_2}>
+                        <Typography
+
                         >
-                          <Grid container>
-                            
-                            <Grid item xs="auto" marginLeft={theme.space_2}>
-                              <Typography
-                                
-                              >
-                                Settings
-                              </Typography>
-                            </Grid>{" "}
-                          </Grid>
-                        </MenuItem>
-                    </Menu>
+                          Settings
+                        </Typography>
+                      </Grid>{" "}
+                    </Grid>
+                  </MenuItem>
+                </Menu>
               </Box>
             </Grid>
           </Grid>
