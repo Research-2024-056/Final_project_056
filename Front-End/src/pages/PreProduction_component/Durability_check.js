@@ -424,7 +424,7 @@ function Durability_check() {
                           />
 
                           <Grid sx={{ marginTop: "20px" }}>
-                            <Button  type="submit" variant='outlined'>Predict</Button>
+                            <Button type="submit" variant='outlined'>Predict</Button>
 
                           </Grid>
                         </center>
@@ -611,7 +611,7 @@ function Durability_check() {
                           />
 
                           <Grid sx={{ marginTop: "20px" }}>
-                            <Button  type="submit" variant='outlined'>Predict</Button>
+                            <Button type="submit" variant='outlined'>Predict</Button>
 
                           </Grid>
                         </center>
@@ -696,7 +696,7 @@ function Durability_check() {
                   Back
                 </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                
+
                 {activeStep !== steps.length &&
                   (completed[activeStep] ? (
                     <Typography variant="caption" sx={{ display: 'inline-block' }}>
