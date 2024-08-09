@@ -6,22 +6,10 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import MenuItem from '@mui/material/MenuItem';
-import { gaugeClasses } from '@mui/x-charts/Gauge';
-import Gauge from 'react-gauge-component';
-import {
-    Typography,
-    Paper,
-    Divider,
-    Box,
-    Switch,
-    FormControlLabel,
-} from '@mui/material';
-
+import { Typography, Paper, Divider, Box, Switch, FormControlLabel } from '@mui/material';
 
 export default function Labor_efficiency_analysis() {
-
     const [EmpNoOptions, setEmpNoOptions] = useState([]);
-    
     const [formData, setFormData] = useState({
         Emp_No: '',
         Name: '',
@@ -34,6 +22,7 @@ export default function Labor_efficiency_analysis() {
     const [efficiencyGrade, setEfficiencyGrade] = useState('');
     const [showGauge, setShowGauge] = useState(true);
     const [gaugeSize, setGaugeSize] = useState(200);
+    const [remaining, setRemaining] = useState(null);
 
     useEffect(() => {
         const fetchEmpNoOptions = async () => {
@@ -109,6 +98,22 @@ export default function Labor_efficiency_analysis() {
         }
     };
 
+    const handleInsert = async (e) => {
+        e.preventDefault();
+        const newEvolutionData = {
+            Emp_No: formData.Emp_No,
+            Last_Evolution: laborEfficiency,
+        };
+
+        try {
+            const response = await axios.post('http://localhost:5000/insert', newEvolutionData);
+            alert('Data inserted successfully!');
+            setRemaining(response.data.remaining);
+        } catch (error) {
+            console.error('Error inserting data:', error);
+        }
+    };
+
     const handleClear = () => {
         setFormData({
             Emp_No: '',
@@ -122,9 +127,7 @@ export default function Labor_efficiency_analysis() {
         setEfficiencyGrade('');
     };
 
-
-    //Prediction
-    
+    // Prediction
     const [Evolution_01Performance, setEvolution_01] = useState('');
     const [Evolution_02Performance, setEvolution_02] = useState('');
     const [Evolution_03Performance, setEvolution_03] = useState('');
@@ -132,260 +135,196 @@ export default function Labor_efficiency_analysis() {
     const [Evolution_05Performance, setEvolution_05] = useState('');
     const [predictedPerformance, setPredictedPerformance] = useState('');
 
-    
     const handleSubmitPredict = async (e) => {
         e.preventDefault();
-
-        const inputData = {
-            Evolution_01: Evolution_01Performance,
-            Evolution_02: Evolution_02Performance,
-            Evolution_03: Evolution_03Performance,
-            Evolution_04: Evolution_04Performance,
-            Evolution_05: Evolution_05Performance,
-        };
-
         try {
-            const response = await axios.post('http://localhost:5000/predict', inputData);
+            const response = await axios.post('http://localhost:5000/predict', {
+                Evolution_01: Evolution_01Performance,
+                Evolution_02: Evolution_02Performance,
+                Evolution_03: Evolution_03Performance,
+                Evolution_04: Evolution_04Performance,
+                Evolution_05: Evolution_05Performance,
+            });
             setPredictedPerformance(response.data.predicted_next_performance);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error predicting performance:', error);
         }
     };
 
     return (
-        <PageMain>
-            <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.5rem", fontFamily: "poppins", marginBottom: '2%' }}>
-                Labor Efficiency Analysis
-            </Typography>
-            <Grid container spacing={4}>
+        <PageMain title="Labor Efficiency Analysis">
+            <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
-                    <Paper elevation={3} sx={{ p: 4 }}>
-                        <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.5rem", fontFamily: "poppins" }}>
-                            Efficiency Calculator
-                        </Typography>
-                        <Divider sx={{ mb: 3 }} />
-                        <FormControl fullWidth>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        select
-                                        name="Emp_No"
-                                        label="Emp No"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={formData.Emp_No}
-                                        onChange={handleEmpNoChange}
-                                        error={!!errors.Emp_No}
-                                        helperText={errors.Emp_No}
-                                    >
-                                        {EmpNoOptions.map((option) => (
-                                            <MenuItem key={option} value={option}>
-                                                {option}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        name="Name"
-                                        label="Name"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={formData.Name}
-                                        disabled
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        name="workingMinutes"
-                                        label="Working Minutes"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={formData.workingMinutes}
-                                        onChange={handleChange}
-                                        error={!!errors.workingMinutes}
-                                        helperText={errors.workingMinutes}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        name="smv"
-                                        label="SMV"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={formData.smv}
-                                        onChange={handleChange}
-                                        error={!!errors.smv}
-                                        helperText={errors.smv}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        name="goodQualityPieces"
-                                        label="Good Quality Pieces"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={formData.goodQualityPieces}
-                                        onChange={handleChange}
-                                        error={!!errors.goodQualityPieces}
-                                        helperText={errors.goodQualityPieces}
-                                    />
-                                </Grid>
+                    <Paper elevation={3} style={{ padding: '16px' }}>
+                        <form onSubmit={handleSubmit}>
+                            <FormControl fullWidth>
+                                <TextField
+                                    select
+                                    label="Emp No"
+                                    name="Emp_No"
+                                    value={formData.Emp_No}
+                                    onChange={handleEmpNoChange}
+                                    error={!!errors.Emp_No}
+                                    helperText={errors.Emp_No}
+                                >
+                                    {EmpNoOptions.map((empNo) => (
+                                        <MenuItem key={empNo} value={empNo}>
+                                            {empNo}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </FormControl>
 
-                                <Grid item xs={12}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleSubmit}
-                                        sx={{ mr: 2 }}
-                                    >
-                                        Calculate
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="error"
-                                        onClick={handleClear}
-                                    >
-                                        Clear
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </FormControl>
-                        {laborEfficiency !== null && (
-                            <Box mt={4}>
-                                <Typography fontSize={17} gutterBottom>
-                                    Efficiency: {laborEfficiency}%
-                                </Typography>
-                                <Typography fontSize={17} gutterBottom>
-                                    Grade: {efficiencyGrade}
-                                </Typography>
-                                <FormControlLabel
-                                    control={
-                                        <Switch
-                                            checked={showGauge}
-                                            onChange={(e) => setShowGauge(e.target.checked)}
-                                        />
-                                    }
-                                    label="Show Gauge"
+                            <FormControl fullWidth>
+                                <TextField
+                                    label="Name"
+                                    name="Name"
+                                    value={formData.Name}
+                                    onChange={handleChange}
+                                    error={!!errors.Name}
+                                    helperText={errors.Name}
+                                    InputProps={{ readOnly: true }}
                                 />
-                                {showGauge && (
-                                    <>
-                                         <Gauge
-                                            value={parseFloat(laborEfficiency)}
-                                            startAngle={-110}
-                                            endAngle={110}
-                                            sx={{
-                                                width: gaugeSize,
-                                                height: gaugeSize / 2,
-                                                margin: '20px 0',
-                                                [`& .${gaugeClasses.valueText}`]: {
-                                                    fontSize: 24,
-                                                    position: 'absolute',
-                                                    top: '50%',
-                                                    left: '50%',
-                                                    transform: 'translate(-50%, -50%)',
-                                                },
-                                            }}
-                                            text={({ value, valueMax }) =>
-                                                `${value.toFixed(2)} / ${valueMax}`
-                                            }
-                                        />
+                            </FormControl>
 
-                                    </>
-                                )}
+                            <FormControl fullWidth>
+                                <TextField
+                                    label="Working Minutes"
+                                    name="workingMinutes"
+                                    value={formData.workingMinutes}
+                                    onChange={handleChange}
+                                    error={!!errors.workingMinutes}
+                                    helperText={errors.workingMinutes}
+                                />
+                            </FormControl>
+
+                            <FormControl fullWidth>
+                                <TextField
+                                    label="SMV"
+                                    name="smv"
+                                    value={formData.smv}
+                                    onChange={handleChange}
+                                    error={!!errors.smv}
+                                    helperText={errors.smv}
+                                />
+                            </FormControl>
+
+                            <FormControl fullWidth>
+                                <TextField
+                                    label="Good Quality Pieces"
+                                    name="goodQualityPieces"
+                                    value={formData.goodQualityPieces}
+                                    onChange={handleChange}
+                                    error={!!errors.goodQualityPieces}
+                                    helperText={errors.goodQualityPieces}
+                                />
+                            </FormControl>
+
+                            {errors.calculation && (
+                                <Typography color="error">{errors.calculation}</Typography>
+                            )}
+
+                            <Box mt={2}>
+                                <Button type="submit" variant="contained" color="primary">
+                                    Calculate
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={handleClear}
+                                    style={{ marginLeft: '16px' }}
+                                >
+                                    Clear
+                                </Button>
+                            </Box>
+                        </form>
+
+                        {laborEfficiency !== null && (
+                            <Box mt={2}>
+                                <Typography variant="h6">
+                                    Labor Efficiency: {laborEfficiency}%
+                                </Typography>
+                                <Typography variant="h6">
+                                    Efficiency Grade: {efficiencyGrade}
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {laborEfficiency !== null && (
+                            <Box mt={2}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleInsert}
+                                >
+                                    Insert
+                                </Button>
                             </Box>
                         )}
                     </Paper>
                 </Grid>
+
                 <Grid item xs={12} md={6}>
-                    {/* Performance Prediction Section */}
-                    <Paper elevation={3} sx={{ p: 4 }}>
-                        <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.5rem", fontFamily: "poppins" }}>
-                            Performance Prediction
-                        </Typography>
-                        <Divider sx={{ mb: 3 }} />
-                        <FormControl fullWidth>
-                            <Grid item xs={12}>
+                    <Paper elevation={3} style={{ padding: '16px' }}>
+                        <form onSubmit={handleSubmitPredict}>
+                            <FormControl fullWidth>
                                 <TextField
-                                    name="Evolution_01"
                                     label="Evolution 01"
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ marginBottom: 2 }}
                                     value={Evolution_01Performance}
                                     onChange={(e) => setEvolution_01(e.target.value)}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </FormControl>
+
+                            <FormControl fullWidth>
                                 <TextField
-                                    name="Evolution_02"
                                     label="Evolution 02"
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ marginBottom: 2 }}
                                     value={Evolution_02Performance}
                                     onChange={(e) => setEvolution_02(e.target.value)}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </FormControl>
+
+                            <FormControl fullWidth>
                                 <TextField
-                                    name="Evolution_03"
                                     label="Evolution 03"
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ marginBottom: 2 }}
                                     value={Evolution_03Performance}
                                     onChange={(e) => setEvolution_03(e.target.value)}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </FormControl>
+
+                            <FormControl fullWidth>
                                 <TextField
-                                    name="Evolution_04"
                                     label="Evolution 04"
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ marginBottom: 2 }}
                                     value={Evolution_04Performance}
                                     onChange={(e) => setEvolution_04(e.target.value)}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </FormControl>
+
+                            <FormControl fullWidth>
                                 <TextField
-                                    name="Evolution_05"
-                                    label="Evolution05"
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ marginBottom: 2 }}
+                                    label="Evolution 05"
                                     value={Evolution_05Performance}
                                     onChange={(e) => setEvolution_05(e.target.value)}
                                 />
-                            </Grid>
-                            <form onSubmit={handleSubmitPredict}>
-                                {/* Add input fields for prediction */}
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    type="submit"
-                                >
-                                    Predict Performance
+                            </FormControl>
+
+                            <Box mt={2}>
+                                <Button type="submit" variant="contained" color="primary">
+                                    Predict
                                 </Button>
-                            </form>
-                        </FormControl>
-                        <div style={{ textAlign: 'center' }} >
+                            </Box>
+                        </form>
+
                         {predictedPerformance && (
-                            <Box mt={4}>
-                                <Typography fontSize={15} gutterBottom>
-                                    Predicted Next Performance:
-                                </Typography>
-                                <Typography color="error" variant="h6" gutterBottom>
-                                    {predictedPerformance}
+                            <Box mt={2}>
+                                <Typography variant="h6">
+                                    Predicted Next Performance: {predictedPerformance}
                                 </Typography>
                             </Box>
                         )}
-                        </div>
                     </Paper>
                 </Grid>
             </Grid>
         </PageMain>
     );
-};
+}
