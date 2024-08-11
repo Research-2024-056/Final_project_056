@@ -157,8 +157,9 @@ export default function Labor_efficiency_analysis() {
                 <Grid item xs={12} md={6}>
                     <Paper elevation={3} style={{ padding: '16px' }}>
                         <form onSubmit={handleSubmit}>
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
+                                mt={2} 
                                     select
                                     label="Emp No"
                                     name="Emp_No"
@@ -175,7 +176,7 @@ export default function Labor_efficiency_analysis() {
                                 </TextField>
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Name"
                                     name="Name"
@@ -187,7 +188,7 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Working Minutes"
                                     name="workingMinutes"
@@ -198,7 +199,7 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="SMV"
                                     name="smv"
@@ -209,7 +210,7 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Good Quality Pieces"
                                     name="goodQualityPieces"
@@ -268,7 +269,7 @@ export default function Labor_efficiency_analysis() {
                 <Grid item xs={12} md={6}>
                     <Paper elevation={3} style={{ padding: '16px' }}>
                         <form onSubmit={handleSubmitPredict}>
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Evolution 01"
                                     value={Evolution_01Performance}
@@ -276,15 +277,16 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
+                                mt={2}
                                     label="Evolution 02"
                                     value={Evolution_02Performance}
                                     onChange={(e) => setEvolution_02(e.target.value)}
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Evolution 03"
                                     value={Evolution_03Performance}
@@ -292,7 +294,7 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Evolution 04"
                                     value={Evolution_04Performance}
@@ -300,7 +302,7 @@ export default function Labor_efficiency_analysis() {
                                 />
                             </FormControl>
 
-                            <FormControl fullWidth>
+                            <FormControl fullWidth sx={{ mt: 2 }}>
                                 <TextField
                                     label="Evolution 05"
                                     value={Evolution_05Performance}
