@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, send_file, request, jsonify
 import joblib
 import pandas as pd
 from flask_cors import CORS, cross_origin
 import csv
+import os 
 
 app = Flask(__name__)
 CORS(app)
@@ -93,6 +94,56 @@ def insert():
     else:
         return jsonify({'error': 'Employee not found'}), 404
 
+#Handle dowload the CSV file
+@app.route('/download', methods=['GET'])
+def download_file():
+    # Specify the path to your CSV file
+    file_path = os.path.join(os.getcwd(), 'Employee_Evolution.csv')
+    
+    try:
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+        
+        return send_file(
+            file_path,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='Employee_Evolution.csv'
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/add_employee', methods=['POST'])
+def add_employee():
+    new_employee = request.get_json()
+    emp_no = new_employee.get("Emp_No")
+    name = new_employee.get("Name")
+
+    if emp_no in data['Emp_No'].values:
+        return jsonify({'error': 'Employee ID already exists.'}), 400
+
+    new_row = {
+        'Emp_No': emp_no,
+        'Name': name,
+        'Evolution_01': 0,
+        'Evolution_02': 0,
+        'Evolution_03': 0,
+        'Evolution_04': 0,
+        'Evolution_05': 0,
+        'Last_Evolution': 0
+    }
+
+    # Append new employee to CSV file
+    with open('Employee_Evolution.csv', 'a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=new_row.keys())
+        if os.stat('Employee_Evolution.csv').st_size == 0:
+            writer.writeheader()
+        writer.writerow(new_row)
+
+    # Update in-memory data
+    data.loc[len(data)] = new_row
+
+    return jsonify(new_row)
 
 
 if __name__ == '__main__':
