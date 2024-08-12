@@ -6,7 +6,7 @@ import csv
 import os 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Load the saved model
 model = joblib.load('random_forest_model.pkl')
@@ -144,6 +144,107 @@ def add_employee():
     data.loc[len(data)] = new_row
 
     return jsonify(new_row)
+
+# Calculate averages and send to the frontend
+@app.route('/evolution_averages', methods=['GET'])
+def get_evolution_averages():
+    averages = {
+        'Evolution_01': data['Evolution_01'].mean(),
+        'Evolution_02': data['Evolution_02'].mean(),
+        'Evolution_03': data['Evolution_03'].mean(),
+        'Evolution_04': data['Evolution_04'].mean(),
+        'Evolution_05': data['Evolution_05'].mean(),
+        'Last_Evolution': data['Last_Evolution'].mean(),
+    }
+    return jsonify(averages)
+
+
+# Endpoint to get employee list
+@app.route('/employees', methods=['GET'])
+def get_employees():
+    employees = data[['Emp_No', 'Name']].to_dict(orient='records')
+    return jsonify(employees)
+
+# Endpoint to get performance data for a specific employee
+@app.route('/employee_performance/<int:emp_no>', methods=['GET'])
+def get_employee_performance(emp_no):
+    employee = data[data['Emp_No'] == emp_no]
+    if not employee.empty:
+        performance = {
+            'Evolution_01': employee.iloc[0]['Evolution_01'],
+            'Evolution_02': employee.iloc[0]['Evolution_02'],
+            'Evolution_03': employee.iloc[0]['Evolution_03'],
+            'Evolution_04': employee.iloc[0]['Evolution_04'],
+            'Evolution_05': employee.iloc[0]['Evolution_05'],
+            'Last_Evolution': employee.iloc[0]['Last_Evolution']
+        }
+        return jsonify(performance)
+    else:
+        return jsonify({"error": "Employee not found"}), 404
+
+
+
+# Calculate performance score based on employee evolution data
+def calculate_performance(employee, filter_option):
+    if filter_option == 'average':
+        evolutions = [
+            employee['Evolution_01'],
+            employee['Evolution_02'],
+            employee['Evolution_03'],
+            employee['Evolution_04'],
+            employee['Evolution_05'],
+            employee['Last_Evolution']
+        ]
+        return sum(evolutions) / len(evolutions)
+    elif filter_option == 'last_evolution':
+        return employee['Last_Evolution']
+
+# Assign high-performing laborers to positions
+@app.route('/seat_plan', methods=['POST'])
+def seat_plan():
+    num_lines = request.json['num_lines']
+    employees_per_line = request.json['employees_per_line']
+    filter_option = request.json.get('filter_option', 'average')
+
+    # Calculate performance for all employees and sort by performance
+    data['Performance'] = data.apply(lambda employee: calculate_performance(employee, filter_option), axis=1)
+    sorted_employees = data.sort_values(by='Performance', ascending=False).to_dict(orient='records')
+
+    seat_plan = []
+    employee_index = 0
+
+    for line in range(num_lines):
+        line_plan = []
+        for seat in range(employees_per_line):
+            if employee_index < len(sorted_employees):
+                line_plan.append(sorted_employees[employee_index])
+                employee_index += 1
+            else:
+                line_plan.append(None)  # No more employees to assign
+        seat_plan.append(line_plan)
+
+    return jsonify(seat_plan)
+
+@app.route('/unassigned_laborers', methods=['GET'])
+def get_unassigned_laborers():
+    assigned_emp_nos = request.args.getlist('assigned_emp_nos')
+    
+    print("Assigned employee numbers received:", assigned_emp_nos)
+    
+    if 'Emp_No' not in data.columns:
+        print("Error: 'Emp_No' column not found in data")
+        return jsonify([])  # Return an empty list if column is missing
+
+    # Filter out unassigned laborers
+    unassigned = data[~data['Emp_No'].isin(assigned_emp_nos)][['Emp_No', 'Name', 'Performance']].to_dict(orient='records')
+    
+    # Print the filtered unassigned laborers for debugging
+    print("Unassigned laborers:", unassigned)
+    
+    # Return the result as JSON
+    return jsonify(unassigned)
+
+
 
 
 if __name__ == '__main__':
