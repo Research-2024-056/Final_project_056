@@ -7,14 +7,15 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  TablePagination,
   Paper,
   Checkbox,
   IconButton,
 } from "@mui/material";
-import { Visibility, Edit } from "@mui/icons-material";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import { Visibility } from "@mui/icons-material";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
 const PerformanceTable = ({
   data,
@@ -23,7 +24,6 @@ const PerformanceTable = ({
   onSort,
   onOpenPopup,
   onOpenPopupSwingActivity,
-  toggleDisplay,
 }) => (
   <TableContainer component={Paper}>
     <Table>
@@ -163,10 +163,12 @@ const PerformanceTable = ({
                 onClick={() => onOpenPopupSwingActivity(row)}
                 color="secondary"
               >
-                <Edit />
+           
+              <AssignmentIcon /> 
+            
               </IconButton>)}
             </TableCell>
-
+            
 
           </TableRow>
         ))}

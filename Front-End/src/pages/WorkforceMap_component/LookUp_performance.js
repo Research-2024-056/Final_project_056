@@ -189,85 +189,97 @@ const LookUpPerformance = () => {
 
   return (
     <PageMain>
-      <Box sx={{ width: "100%" }}>
-        <Grid
-          container
-          columnSpacing={{ xs: 5, sm: 4, md: 4 }}
-          sx={{ marginTop: "10px" }}
+      <Box sx={{ width: "100%", margin: "0 auto" }}>
+        <Typography
+          variant="h1"
+          sx={{
+            lineHeight: 1,
+            fontWeight: "500",
+            fontSize: "1.625rem",
+            fontFamily: "poppins",
+            marginTop: "20px",
+            marginBottom: "10px",
+          }}
         >
-          <Grid item xs={12} sm={6}>
+          LookUp Performance
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between", 
+            marginTop: "40px", 
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenAddEmployeePopup}
+              sx={{ mr: "10px" }} 
+            >
+              Add Employee
+            </Button>
+
+            <AddEmployeeModal
+              open={openAddEmployeePopup}
+              onClose={handleCloseAddEmployeePopup}
+              newEmployee={newEmployee}
+              error={error}
+              onInputChange={handleInputChange}
+              onAddEmployee={handleAddEmployee}
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDownload}
+            >
+              Download CSV
+            </Button>
+          </Box>
+
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={searchInput}
+            onChange={handleSearchInputChange}
+            sx={{
+              marginLeft: "20px",
+              width: "250px",
+            }}
+          />
+        </Box>
+
+        <Paper elevation={3} sx={{ padding: "20px", marginTop: "20px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between", // Aligns items at both ends of the container
+              marginBottom: "20px", // Optional, for spacing below the flex container
+            }}
+          >
             <Typography
-              variant="h1"
+              variant="h2"
               sx={{
                 lineHeight: 1,
                 fontWeight: "500",
-                fontSize: "1.625rem",
-                fontFamily: "poppins",
-                marginBottom: "10px",
+                fontSize: "1.25rem",
+                fontFamily: "Poppins, sans-serif",
               }}
             >
-              LookUp Performance
+              Employee Performance Data
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Search"
-              variant="outlined"
-              value={searchInput}
-              onChange={handleSearchInputChange}
-              style={{ marginBottom: "10px", width: "100%" }}
-            />
-          </Grid>
-        </Grid>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenAddEmployeePopup}
-          sx={{ marginTop: "20px", mr: "5px" }}
-        >
-          Add Employee
-        </Button>
-        <AddEmployeeModal
-          open={openAddEmployeePopup}
-          onClose={handleCloseAddEmployeePopup}
-          newEmployee={newEmployee}
-          error={error}
-          onInputChange={handleInputChange}
-          onAddEmployee={handleAddEmployee}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleDownload}
-          sx={{ marginTop: "20px" }}
-        >
-          Download CSV
-        </Button>
-        <Grid
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: "90%", marginTop: "-35px" }}
-        >
-          <Grid item>
-            <Typography variant="body1">Recommendations</Typography>
-          </Grid>
-          <Grid item>
-            <Switch checked={toggleDisplay} onChange={handleToggleChange} />
-          </Grid>
-        </Grid>
 
-        <Paper elevation={3} sx={{ padding: "20px", marginTop: "20px" }}>
-          <Typography
-            variant="h2"
-            sx={{
-              lineHeight: 1,
-              fontWeight: "500",
-              fontSize: "1.25rem",
-              fontFamily: "poppins",
-            }}
-          >
-            Employee Performance Data
-          </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="body1" sx={{ marginRight: "10px" }}>
+                Recommendations
+              </Typography>
+              <Switch checked={toggleDisplay} onChange={handleToggleChange} />
+            </Box>
+          </Box>
 
           <PerformanceTable
             data={filteredData}
