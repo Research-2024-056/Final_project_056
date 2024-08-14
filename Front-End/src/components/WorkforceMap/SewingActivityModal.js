@@ -87,7 +87,7 @@ const SewingActivityModal = ({
           <Button variant="outlined" color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={onSubmit}>
+          <Button variant="contained" color="primary" onClick={onClose}>
             Submit
           </Button>
         </Box>

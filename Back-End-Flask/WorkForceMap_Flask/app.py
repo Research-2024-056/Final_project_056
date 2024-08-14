@@ -229,20 +229,37 @@ def seat_plan():
 def get_unassigned_laborers():
     assigned_emp_nos = request.args.getlist('assigned_emp_nos')
     
-    print("Assigned employee numbers received:", assigned_emp_nos)
-    
     if 'Emp_No' not in data.columns:
-        print("Error: 'Emp_No' column not found in data")
         return jsonify([])  # Return an empty list if column is missing
 
     # Filter out unassigned laborers
     unassigned = data[~data['Emp_No'].isin(assigned_emp_nos)][['Emp_No', 'Name', 'Performance']].to_dict(orient='records')
     
-    # Print the filtered unassigned laborers for debugging
-    print("Unassigned laborers:", unassigned)
     
     # Return the result as JSON
     return jsonify(unassigned)
+
+@app.route('/predict_performance/<int:emp_no>', methods=['GET'])
+def predict_performance(emp_no):
+    employee = data[data['Emp_No'] == emp_no]
+    
+    if employee.empty:
+        return jsonify({'error': 'Employee not found'}), 404
+    
+    # Prepare data for prediction
+    input_data = employee[['Evolution_01', 'Evolution_02', 'Evolution_03', 'Evolution_04', 'Evolution_05']].values
+    input_df = pd.DataFrame(input_data, columns=['Evolution_01', 'Evolution_02', 'Evolution_03', 'Evolution_04', 'Evolution_05'])
+    
+    # Predict performance
+    predicted_performance = model.predict(input_df)
+    
+    last_performance = employee['Last_Evolution'].values[0]
+    #print("Prediction and last performance data:", predicted_performance[0], last_performance)
+    return jsonify({
+    'predicted_performance': predicted_performance[0],
+    'last_performance': last_performance
+})
+
 
 
 

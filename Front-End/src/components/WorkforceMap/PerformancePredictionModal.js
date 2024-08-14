@@ -8,54 +8,115 @@ const PerformancePredictionModal = ({
   predictedPerformance,
 }) => (
   <Modal open={open} onClose={onClose}>
-    <Box
+  <Box
+    sx={{
+      width: "450px",
+      padding: "30px",
+      backgroundColor: "white",
+      margin: "auto",
+      marginTop: "10%",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+      borderRadius: "10px",
+    }}
+  >
+    <Typography
+      variant="h6"
+      component="h2"
       sx={{
-        width: "400px",
-        padding: "20px",
-        backgroundColor: "white",
-        margin: "auto",
-        marginTop: "15%",
+        marginBottom: "25px",
+        fontWeight: "600",
+        color: "#3f51b5",
+        fontSize: "1.5rem",
+        textAlign: "center",
       }}
     >
-      <Typography variant="h6" component="h2" sx={{ marginBottom: "20px" }}>
-        Performance Prediction
-      </Typography>
-      <Typography variant="body1">
-        Employee ID: {selectedRow?.Emp_No}
-      </Typography>
-      <Typography variant="body1">
-        Employee Name: {selectedRow?.Name}
-      </Typography>
-      <Typography variant="body1">
-        Evolution_01: {selectedRow?.Evolution_01}
-      </Typography>
-      <Typography variant="body1">
-        Evolution_02: {selectedRow?.Evolution_02}
-      </Typography>
-      <Typography variant="body1">
-        Evolution_03: {selectedRow?.Evolution_03}
-      </Typography>
-      <Typography variant="body1">
-        Evolution_04: {selectedRow?.Evolution_04}
-      </Typography>
-      <Typography variant="body1">
-        Evolution_05: {selectedRow?.Evolution_05}
-      </Typography>
-      <Typography variant="body1">
-        Actual Last Performance: {selectedRow?.Last_Evolution}
-      </Typography>
-      <Typography variant="body1">
-        Predicted Performance: {predictedPerformance}
-      </Typography>
-      <Box
-        sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}
+      Performance Prediction
+    </Typography>
+    
+    <Box sx={{ marginBottom: "20px" }}>
+      <Typography
+        variant="body1"
+        sx={{ fontWeight: "500", color: "#424242", marginBottom: "5px" }}
       >
-        <Button variant="contained" color="primary" onClick={onClose}>
-          Close
-        </Button>
-      </Box>
+        Employee ID:{" "}
+        <Typography component="span" sx={{ color: "#3f51b5" }}>
+          {selectedRow?.Emp_No}
+        </Typography>
+      </Typography>
+
+      <Typography
+        variant="body1"
+        sx={{ fontWeight: "500", color: "#424242", marginBottom: "5px" }}
+      >
+        Employee Name:{" "}
+        <Typography component="span" sx={{ color: "#3f51b5" }}>
+          {selectedRow?.Name}
+        </Typography>
+      </Typography>
+
+      {["Evolution_01", "Evolution_02", "Evolution_03", "Evolution_04", "Evolution_05"].map((evolution, index) => (
+        <Typography
+          key={index}
+          variant="body1"
+          sx={{ fontWeight: "500", color: "#424242", marginBottom: "5px" }}
+        >
+          {`Evolution ${index + 1}: `}
+          <Typography component="span" sx={{ color: "#3f51b5" }}>
+            {selectedRow?.[evolution]}
+          </Typography>
+        </Typography>
+      ))}
+
+      <Typography
+        variant="body1"
+        sx={{ fontWeight: "500", color: "#424242", marginBottom: "5px" }}
+      >
+        Actual Last Performance:{" "}
+        <Typography component="span" sx={{ color: "#3f51b5" }}>
+          {selectedRow?.Last_Evolution}
+        </Typography>
+      </Typography>
+
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: "500",
+          color: "#424242",
+          marginTop: "10px",
+          paddingTop: "10px",
+          borderTop: "1px solid #e0e0e0",
+        }}
+      >
+        Predicted Performance:{" "}
+        <Typography component="span" sx={{ color: "#f44336", fontWeight: "600" }}>
+          {predictedPerformance}
+        </Typography>
+      </Typography>
     </Box>
-  </Modal>
+
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "20px",
+      }}
+    >
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={onClose}
+        sx={{
+          textTransform: "none",
+          fontWeight: "500",
+          padding: "8px 20px",
+        }}
+      >
+        Close
+      </Button>
+    </Box>
+  </Box>
+</Modal>
+
 );
 
 export default PerformancePredictionModal;
