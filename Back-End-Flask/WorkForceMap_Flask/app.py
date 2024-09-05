@@ -5,6 +5,8 @@ from flask_cors import CORS, cross_origin
 import csv
 import os 
 
+
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 

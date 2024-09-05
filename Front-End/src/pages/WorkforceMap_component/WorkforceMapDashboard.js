@@ -32,6 +32,7 @@ function WorkforceMapDashboard() {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [employeePerformanceData, setEmployeePerformanceData] = useState([]);
   const [gap, setGap] = useState(null);
+  const [employeeEvolutionData, setEmployeeEvolutionData] = useState([]);
 
   useEffect(() => {
     // Fetch average evolution data
@@ -65,6 +66,22 @@ function WorkforceMapDashboard() {
     setSelectedEmployee(emp_no);
 
     if (emp_no) {
+      // Fetch employee's specific evolution data
+      axios
+        .get(`http://localhost:5000/employee_performance/${emp_no}`)
+        .then((response) => {
+          const data = response.data;
+          const formattedData = Object.keys(data).map((key) => ({
+            evolution: key,
+            value: data[key],
+          }));
+          setEmployeeEvolutionData(formattedData);
+        })
+        .catch((error) => {
+          console.error("Error fetching employee evolution data!", error);
+        });
+
+      // Fetch employee's performance data for the second chart
       axios
         .get(`http://localhost:5000/predict_performance/${emp_no}`)
         .then((response) => {
@@ -78,12 +95,13 @@ function WorkforceMapDashboard() {
               last_performance,
             },
           ];
-          setEmployeePerformanceData(formattedData);
+          setEmployeePerformanceData(formattedData); // Update the second graph's data
         })
         .catch((error) => {
           console.error("Error fetching employee performance data!", error);
         });
     } else {
+      setEmployeeEvolutionData([]);
       setEmployeePerformanceData([]);
       setGap(null);
     }
@@ -188,7 +206,7 @@ function WorkforceMapDashboard() {
           <Grid item xs={6}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart
-                data={evolutionData}
+                data={selectedEmployee ? employeeEvolutionData : evolutionData}
                 margin={{ top: 10, right: 30, bottom: 10 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
@@ -221,7 +239,7 @@ function WorkforceMapDashboard() {
                 <Legend />
                 <Line
                   type="monotone"
-                  dataKey="average"
+                  dataKey={selectedEmployee ? "value" : "average"}
                   stroke="#3f51b5"
                   strokeWidth={3}
                   dot={{ r: 6, fill: "#3f51b5" }}
@@ -280,22 +298,33 @@ function WorkforceMapDashboard() {
                   top: "40%",
                   left: "75%",
                   transform: "translate(-50%, -50%)",
-                  padding: "10px 20px",
+                  padding: "16px",
                   backgroundColor: "#f5f5f5",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                   borderRadius: "8px",
-                  textAlign: "center",
-                  zIndex: 10,
+                  boxShadow: 3,
                 }}
               >
                 <Typography
                   sx={{
-                    fontSize: "1rem",
                     fontWeight: "bold",
-                    color: gap > 0 ? "#4caf50" : "#f44336",
+                    fontSize: "18px",
+                    color: "#424242",
+                    textAlign: "center",
+                    fontFamily: "Poppins",
                   }}
                 >
-                  Gap: {gap}
+                  Gap
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontSize: "16px",
+                    color: "#ff5722",
+                    textAlign: "center",
+                    marginTop: "8px",
+                  }}
+                >
+                  {gap}
                 </Typography>
               </Paper>
             )}

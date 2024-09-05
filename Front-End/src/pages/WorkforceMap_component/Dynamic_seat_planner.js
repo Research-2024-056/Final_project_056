@@ -346,15 +346,14 @@ const SeatPlanner = () => {
         {showBanner && (
           <Box
             sx={{
-              backgroundColor: "#e2f2fd", // Softer background color
+              backgroundColor: "#e2f2fd", 
               padding: "15px",
               marginBottom: "20px",
-              borderRadius: "5px", // More rounded corners
+              borderRadius: "5px", 
               textAlign: "center",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Subtle shadow
-             // border: "1px solid #b3e5fc", // Light border to enhance the look
-              maxWidth: "80%", // Limiting the width
-              margin: " auto", // Center the banner
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", 
+              maxWidth: "80%",
+              margin: " auto", 
               marginTop: "12%"
             }}
           >
@@ -362,9 +361,9 @@ const SeatPlanner = () => {
               variant="body1"
               sx={{
                 marginBottom: "10px",
-                color: "#0377bd", // Darker text color for better contrast
-                fontWeight: "500", // Slightly bolder text
-                fontSize: "1rem", // Adjust text size if needed
+                color: "#0377bd", 
+                fontWeight: "500", 
+                fontSize: "1rem", 
               }}
             >
               Please configure the settings and generate the seat plan to start
