@@ -85,14 +85,14 @@ function WorkforceMapDashboard() {
       axios
         .get(`http://localhost:5000/predict_performance/${emp_no}`)
         .then((response) => {
-          const { predicted_performance, last_performance } = response.data;
-          const gapValue = (last_performance - predicted_performance).toFixed(3);
+          const { predicted_performance, Actual_performance } = response.data;
+          const gapValue = (Actual_performance - predicted_performance).toFixed(3);
           setGap(gapValue);
           const formattedData = [
             {
               name: "Performance",
               predicted_performance,
-              last_performance,
+              Actual_performance,
             },
           ];
           setEmployeePerformanceData(formattedData); // Update the second graph's data
@@ -113,11 +113,12 @@ function WorkforceMapDashboard() {
         sx={{
           lineHeight: 1,
           fontWeight: "500",
-          fontSize: "1.625rem",
+          fontSize: { xs: "1.25rem", sm: "1.625rem" }, // Adjust font size for small screens
           fontFamily: "Poppins",
           color: "#3f51b5",
           marginBottom: "40px",
           marginTop: "20px",
+          textAlign: "center", // Center the text on small screens
         }}
       >
         Workforce-Map Dashboard
@@ -163,14 +164,15 @@ function WorkforceMapDashboard() {
         </Grid>
 
         <Grid container justifyContent="space-between" alignItems="center">
-          <Grid item>
+          <Grid item xs={12} sm={8}>
             <Typography
               sx={{
                 lineHeight: 1,
                 fontWeight: "500",
-                fontSize: "1.25rem",
+                fontSize: { xs: "1rem", sm: "1.25rem" }, // Adjust font size for small screens
                 fontFamily: "Poppins, sans-serif",
                 color: "#424242",
+                textAlign: { xs: "center", sm: "left" }, // Center text on mobile
               }}
             >
               {selectedEmployee
@@ -178,8 +180,8 @@ function WorkforceMapDashboard() {
                 : "Average Performance per Evolution"}
             </Typography>
           </Grid>
-          <Grid item>
-            <FormControl sx={{ width: "250px" }}>
+          <Grid item xs={12} sm={4}>
+            <FormControl fullWidth>
               <InputLabel id="employee-select-label">
                 Select Employee
               </InputLabel>
@@ -203,7 +205,7 @@ function WorkforceMapDashboard() {
         </Grid>
 
         <Grid container spacing={3} sx={{ marginTop: "30px" }}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart
                 data={selectedEmployee ? employeeEvolutionData : evolutionData}
@@ -249,7 +251,7 @@ function WorkforceMapDashboard() {
             </ResponsiveContainer>
           </Grid>
 
-          <Grid item xs={6} position="relative">
+          <Grid item xs={12} md={6} position="relative">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={employeePerformanceData}
@@ -287,7 +289,7 @@ function WorkforceMapDashboard() {
                   fill="#ff5722"
                   barSize={40}
                 />
-                <Bar dataKey="last_performance" fill="#9c27b0" barSize={40} />
+                <Bar dataKey="Actual_performance" fill="#9c27b0" barSize={40} />
               </BarChart>
             </ResponsiveContainer>
 
@@ -296,7 +298,7 @@ function WorkforceMapDashboard() {
                 sx={{
                   position: "absolute",
                   top: "40%",
-                  left: "75%",
+                  left: { xs: "60%", md: "75%" }, // Adjust for smaller screens
                   transform: "translate(-50%, -50%)",
                   padding: "16px",
                   backgroundColor: "#f5f5f5",

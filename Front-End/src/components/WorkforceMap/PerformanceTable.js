@@ -8,14 +8,12 @@ import {
   TableRow,
   TableSortLabel,
   Paper,
-  Checkbox,
   IconButton,
 } from "@mui/material";
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import { Visibility } from "@mui/icons-material";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ContactEmergencyIcon from '@mui/icons-material/ContactEmergency';
 
 const PerformanceTable = ({
   data,
@@ -25,8 +23,8 @@ const PerformanceTable = ({
   onOpenPopup,
   onOpenPopupSwingActivity,
 }) => (
-  <TableContainer component={Paper}>
-    <Table>
+  <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto' }}>
+    <Table size="small" aria-label="Performance Table">
       <TableHead>
         <TableRow>
           <TableCell>
@@ -98,7 +96,7 @@ const PerformanceTable = ({
               direction={orderBy === "Last_Evolution" ? order : "asc"}
               onClick={() => onSort("Last_Evolution")}
             >
-              Last_Evolution
+              Last Evolution
             </TableSortLabel>
           </TableCell>
           <TableCell>Actions</TableCell>
@@ -107,69 +105,65 @@ const PerformanceTable = ({
       <TableBody>
         {data.map((row) => (
           <TableRow key={row.Emp_No}>
-            <TableCell>{row.Emp_No}</TableCell>
-            <TableCell>{row.Name}</TableCell>
-            <TableCell>{row.Evolution_01}</TableCell>
-            <TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>{row.Emp_No}</TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>{row.Name}</TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>{row.Evolution_01}</TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               {row.Evolution_02 < row.Evolution_01 ? (
-                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 20 }} />
+                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 18 }} />
               ) : (
-                <BookmarkAddedIcon sx={{ color: "green", fontSize: 20 }} />
+                <BookmarkAddedIcon sx={{ color: "green", fontSize: 18 }} />
               )}
               {row.Evolution_02}
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               {row.Evolution_03 < row.Evolution_02 ? (
-                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 20 }} />
+                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 18 }} />
               ) : (
-                <BookmarkAddedIcon sx={{ color: "green", fontSize: 20 }} />
+                <BookmarkAddedIcon sx={{ color: "green", fontSize: 18 }} />
               )}
               {row.Evolution_03}
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               {row.Evolution_04 < row.Evolution_03 ? (
-                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 20 }} />
+                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 18 }} />
               ) : (
-                <BookmarkAddedIcon sx={{ color: "green", fontSize: 20 }} />
+                <BookmarkAddedIcon sx={{ color: "green", fontSize: 18 }} />
               )}
               {row.Evolution_04}
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               {row.Evolution_05 < row.Evolution_04 ? (
-                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 20 }} />
+                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 18 }} />
               ) : (
-                <BookmarkAddedIcon sx={{ color: "green", fontSize: 20 }} />
+                <BookmarkAddedIcon sx={{ color: "green", fontSize: 18 }} />
               )}
               {row.Evolution_05}
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               {row.Last_Evolution < row.Evolution_05 ? (
-                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 20 }} />
+                <BookmarkRemoveIcon sx={{ color: "red", fontSize: 18 }} />
               ) : (
-                <BookmarkAddedIcon sx={{ color: "green", fontSize: 20 }} />
+                <BookmarkAddedIcon sx={{ color: "green", fontSize: 18 }} />
               )}
               {row.Last_Evolution}
             </TableCell>
 
             <TableCell>
-                
               <IconButton onClick={() => onOpenPopup(row)} color="primary">
-                <Visibility />
+                <AnalyticsIcon fontSize="small" />
               </IconButton>
 
               {row.Evolution_04 > row.Evolution_05 &&
-                    row.Evolution_05 > row.Last_Evolution && (
-              <IconButton
-                onClick={() => onOpenPopupSwingActivity(row)}
-                color="secondary"
-              >
-           
-              <AssignmentIcon /> 
-            
-              </IconButton>)}
+                row.Evolution_05 > row.Last_Evolution && (
+                <IconButton
+                  onClick={() => onOpenPopupSwingActivity(row)}
+                  color="secondary"
+                >
+                  <ContactEmergencyIcon fontSize="small" />
+                </IconButton>
+              )}
             </TableCell>
-            
-
           </TableRow>
         ))}
       </TableBody>

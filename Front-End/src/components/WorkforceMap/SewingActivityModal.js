@@ -30,17 +30,18 @@ const SewingActivityModal = ({
   ];
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} onClick={onSubmit}>
       <Box
         sx={{
-          width: { xs: "90%", sm: "70%", md: "60%" },
-          padding: 3,
+          width: { xs: "95%", sm: "80%", md: "60%", lg: "50%" },
+          maxHeight: "90vh",
+          padding: { xs: 2, sm: 3 },
           backgroundColor: "background.paper",
           margin: "auto",
           marginTop: 8,
           borderRadius: 2,
           boxShadow: 2,
-          overflow: "hidden",
+          overflowY: "auto",
         }}
       >
         <Typography
@@ -49,11 +50,13 @@ const SewingActivityModal = ({
         >
           Select Activities
         </Typography>
+
         <Box
           sx={{
             display: "flex",
             flexWrap: "wrap",
-            gap: 1,
+            gap: 1.5, // More spacing between items for a cleaner look
+            justifyContent: { xs: "center", sm: "flex-start" }, // Align items for smaller screens
           }}
         >
           {activities.map((activity) => (
@@ -68,26 +71,43 @@ const SewingActivityModal = ({
               }
               label={activity}
               sx={{
-                flexBasis: "calc(33% - 16px)",
+                flexBasis: { xs: "100%", sm: "calc(50% - 8px)", md: "calc(33% - 16px)" }, // Responsive layout for different screen sizes
                 marginBottom: 1,
                 "& .MuiFormControlLabel-label": {
-                  fontSize: "0.875rem",
+                  fontSize: "0.875rem", // Keep label text size readable
                 },
               }}
             />
           ))}
         </Box>
+
         <Box
           sx={{
             marginTop: 3,
             display: "flex",
             justifyContent: "space-between",
+            gap: 2, // Better spacing between buttons
+            flexDirection: { xs: "column", sm: "row" }, // Stack buttons on smaller screens
           }}
         >
-          <Button variant="outlined" color="secondary" onClick={onClose}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={onClose}
+            sx={{
+              width: { xs: "100%", sm: "auto" }, // Full width for small screens
+            }}
+          >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={onClose}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onSubmit}
+            sx={{
+              width: { xs: "100%", sm: "auto" }, 
+            }}
+          >
             Submit
           </Button>
         </Box>
