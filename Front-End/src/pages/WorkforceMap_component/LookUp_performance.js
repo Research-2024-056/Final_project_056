@@ -25,6 +25,7 @@ const LookUpPerformance = () => {
   const [orderBy, setOrderBy] = useState("");
   const [order, setOrder] = useState("asc");
   const [openPopupSwingActivity, setopenPopupSwingActivity] = useState(false);
+  //const [selectedActivitiesByRow, setSelectedActivitiesByRow] = useState({}); // Store selected activities for each row
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -128,6 +129,33 @@ const LookUpPerformance = () => {
     setSelectedRow(null);
   };
 
+    // Function to handle checkbox change for the current row
+    // const handleCheckboxChange = (activity) => {
+    //   const currentRowId = selectedRow.id; // Assuming each row has a unique ID
+  
+    //   setSelectedActivitiesByRow((prev) => {
+    //     const activitiesForRow = prev[currentRowId] || [];
+    //     if (activitiesForRow.includes(activity)) {
+    //       // Remove the activity if it's already selected
+    //       return {
+    //         ...prev,
+    //         [currentRowId]: activitiesForRow.filter((item) => item !== activity),
+    //       };
+    //     } else {
+    //       // Add the new activity
+    //       return {
+    //         ...prev,
+    //         [currentRowId]: [...activitiesForRow, activity],
+    //       };
+    //     }
+    //   });
+    // };
+  
+    // // Function to handle submitting activities for the current row
+    // const handleSubmit = () => {
+    //   handleClosePopupSwingActivity();
+    // };
+
   const handleOpenAddEmployeePopup = () => {
     setOpenAddEmployeePopup(true);
   };
@@ -208,8 +236,8 @@ const LookUpPerformance = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between", 
-            marginTop: "40px", 
+            justifyContent: "space-between",
+            marginTop: "40px",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -217,7 +245,7 @@ const LookUpPerformance = () => {
               variant="contained"
               color="primary"
               onClick={handleOpenAddEmployeePopup}
-              sx={{ mr: "10px" }} 
+              sx={{ mr: "10px" }}
             >
               Add Employee
             </Button>

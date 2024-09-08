@@ -150,6 +150,7 @@ def add_employee():
 # Calculate averages and send to the frontend
 @app.route('/evolution_averages', methods=['GET'])
 def get_evolution_averages():
+    data = pd.read_csv('Employee_Evolution.csv')
     averages = {
         'Evolution_01': data['Evolution_01'].mean(),
         'Evolution_02': data['Evolution_02'].mean(),
@@ -259,7 +260,7 @@ def predict_performance(emp_no):
     #print("Prediction and last performance data:", predicted_performance[0], last_performance)
     return jsonify({
     'predicted_performance': predicted_performance[0],
-    'last_performance': last_performance
+    'Actual_performance': last_performance
 })
 
 

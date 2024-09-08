@@ -25,6 +25,7 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd"; // Import the
 import { blue, red, green } from "@mui/material/colors";
 import * as XLSX from "xlsx";
 
+
 const SeatPlanner = () => {
   const [lines, setLines] = useState(1);
   const [employeesPerLine, setEmployeesPerLine] = useState(1);
@@ -34,8 +35,10 @@ const SeatPlanner = () => {
   const [unassignedLaborers, setUnassignedLaborers] = useState([]);
   const [isSeatPlanGenerated, setIsSeatPlanGenerated] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); 
 
   const generateSeatPlan = async () => {
+    setIsLoading(true); // Start loading
     try {
       const response = await axios.post("http://127.0.0.1:5000/seat_plan", {
         num_lines: lines,
@@ -48,6 +51,7 @@ const SeatPlanner = () => {
     } catch (error) {
       console.error("Error generating seat plan:", error);
     }
+    setIsLoading(false); // End loading
   };
 
   const handleClear = () => {
@@ -132,7 +136,7 @@ const SeatPlanner = () => {
 
   const renderSeats = (line, lineIndex) => {
     return line.map((employee, seatIndex) => (
-      <Grid item key={`${lineIndex}-${seatIndex}`} xs={6} sm={4} md={3} lg={2}>
+      <Grid item key={`${lineIndex}-${seatIndex}`} xs={12} sm={6} md={4} lg={3}>
         <Card
           sx={{
             backgroundColor: employee
@@ -228,13 +232,15 @@ const SeatPlanner = () => {
   return (
     <PageMain title="Dynamic Seat Planner">
       <Typography
+        variant="h1"
         sx={{
-          lineHeight: 1.2,
-          fontWeight: "600",
-          fontSize: "1.75rem",
-          fontFamily: "Poppins",
-          marginBottom: "20px",
-          color: "#2E3B55",
+          lineHeight: 1,
+          fontWeight: "500",
+          fontSize: "1.625rem",
+          fontFamily: "poppins",
+          marginTop: "20px",
+          marginBottom: "40px",
+          textAlign: "center", // Centering the title
         }}
       >
         Dynamic Seat Planner
@@ -246,6 +252,7 @@ const SeatPlanner = () => {
           gap: "16px",
           marginBottom: "20px",
           flexWrap: "wrap",
+          justifyContent: "center", // Center the form fields on smaller screens
         }}
       >
         <TextField
@@ -254,7 +261,7 @@ const SeatPlanner = () => {
           value={lines}
           onChange={(e) => setLines(parseInt(e.target.value))}
           size="small"
-          sx={{ maxWidth: "120px" }}
+          sx={{ maxWidth: { xs: "100%", sm: "120px" } }}
         />
         <TextField
           label="Labors Per Line"
@@ -262,7 +269,7 @@ const SeatPlanner = () => {
           value={employeesPerLine}
           onChange={(e) => setEmployeesPerLine(parseInt(e.target.value))}
           size="small"
-          sx={{ maxWidth: "145px" }}
+          sx={{ maxWidth: { xs: "100%", sm: "145px" } }}
         />
         <FormControl component="fieldset">
           <RadioGroup
@@ -296,6 +303,7 @@ const SeatPlanner = () => {
             backgroundColor: "#1976D2",
             "&:hover": { backgroundColor: "#1565C0" },
             marginTop: { xs: "10px", md: "0" },
+            width: { xs: "100%", sm: "auto" }, // Full width on smaller screens
           }}
         >
           Generate Seat Plan
@@ -307,7 +315,8 @@ const SeatPlanner = () => {
             onClick={handleClear}
             sx={{
               marginTop: { xs: "10px", md: "0" },
-              marginLeft: "16px",
+              width: { xs: "100%", sm: "auto" }, // Full width on smaller screens
+              marginLeft: { sm: "16px" }, // Add margin only on larger screens
             }}
           >
             Clear
@@ -320,7 +329,8 @@ const SeatPlanner = () => {
             onClick={handleDownload}
             sx={{
               marginTop: { xs: "10px", md: "0" },
-              marginLeft: "300px",
+              width: { xs: "100%", sm: "auto" }, // Full width on smaller screens
+              marginLeft: { sm: "16px" },
             }}
           >
             <DownloadIcon />
@@ -329,16 +339,28 @@ const SeatPlanner = () => {
         )}
       </Box>
 
+      {/* Loading GIF */}
+      {isLoading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <img alt='gif' mt='10px' src='https://i.gifer.com/ZC9Y.gif' width="10%"></img>
+        </Box>
+      )}
+
       <Grid container spacing={2}>
         {seatPlan.map((line, lineIndex) => (
           <Grid item xs={12} key={`line-${lineIndex}`}>
             <Typography
               variant="h6"
-              sx={{ marginBottom: "10px", color: "#2E3B55" }}
+              sx={{ marginBottom: "10px", color: "#2E3B55", textAlign: "center" }}
             >
               Production Line {lineIndex + 1}
             </Typography>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} justifyContent="center">
               {renderSeats(line, lineIndex)}
             </Grid>
           </Grid>
@@ -346,24 +368,24 @@ const SeatPlanner = () => {
         {showBanner && (
           <Box
             sx={{
-              backgroundColor: "#e2f2fd", 
+              backgroundColor: "#e2f2fd",
               padding: "15px",
               marginBottom: "20px",
-              borderRadius: "5px", 
+              borderRadius: "5px",
               textAlign: "center",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", 
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
               maxWidth: "80%",
-              margin: " auto", 
-              marginTop: "12%"
+              margin: "auto",
+              marginTop: "12%",
             }}
           >
             <Typography
               variant="body1"
               sx={{
                 marginBottom: "10px",
-                color: "#0377bd", 
-                fontWeight: "500", 
-                fontSize: "1rem", 
+                color: "#0377bd",
+                fontWeight: "500",
+                fontSize: "1rem",
               }}
             >
               Please configure the settings and generate the seat plan to start
@@ -383,55 +405,49 @@ const SeatPlanner = () => {
             >
               <Typography
                 variant="h6"
-                sx={{ marginBottom: "10px", color: "#D32F2F" }}
+                sx={{ marginBottom: "10px", color: "#D32F2F", textAlign: "center" }}
               >
                 Removed Laborers
               </Typography>
-              {removedLaborers.length > 0 ? (
-                <Grid container spacing={2}>
-                  {removedLaborers.map((laborer) => (
-                    <Grid item xs={6} sm={4} md={3} lg={2} key={laborer.Emp_No}>
-                      <Card
-                        sx={{
-                          backgroundColor: red[50],
-                          padding: "5px",
-                          borderRadius: "8px",
-                          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-                        }}
+              <Grid container spacing={2} justifyContent="center">
+                {removedLaborers.map((laborer) => (
+                  <Grid item xs={6} sm={4} md={3} lg={2} key={laborer.Emp_No}>
+                    <Card
+                      sx={{
+                        backgroundColor: red[50],
+                        padding: "5px",
+                        borderRadius: "8px",
+                        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                      }}
+                    >
+                      <CardContent
+                        sx={{ textAlign: "center", padding: "8px" }}
                       >
-                        <CardContent
-                          sx={{ textAlign: "center", padding: "8px" }}
+                        <Avatar
+                          sx={{
+                            backgroundColor: red[500],
+                            margin: "0 auto",
+                            width: 30,
+                            height: 30,
+                          }}
                         >
-                          <Avatar
-                            sx={{
-                              backgroundColor: red[500],
-                              margin: "0 auto",
-                              width: 30,
-                              height: 30,
-                            }}
-                          >
-                            <PersonIcon />
-                          </Avatar>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              marginTop: "5px",
-                              fontWeight: "500",
-                              fontSize: "0.75rem",
-                            }}
-                          >
-                            {laborer.Name} (ID: {laborer.Emp_No})
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              ) : (
-                <Typography variant="body2" color="textSecondary">
-                  No laborers removed.
-                </Typography>
-              )}
+                          <PersonIcon />
+                        </Avatar>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            marginTop: "5px",
+                            fontWeight: "500",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          {laborer.Name} (ID: {laborer.Emp_No})
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
           </Grid>
         )}
