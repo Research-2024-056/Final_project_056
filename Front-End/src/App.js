@@ -7,6 +7,7 @@ import MachineSelect from "./pages/NeedlePerformance/MachineSelect";
 import NeedleDashboard from "./pages/NeedlePerformance/NeedleDashboard";
 import OrderDashboard from "./pages/Order/OrderDashboard";
 import NewOrder from "./pages/Order/NewOrder";
+import OrderDetails from "./pages/Order/OrderDetails";
 // Workforce Map
 import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDashboard";
 import LookUp_performance from "./pages/WorkforceMap_component/LookUp_performance";
@@ -62,6 +63,7 @@ function App() {
           path="/needledashboard/:machineId"
           element={<NeedleDashboard></NeedleDashboard>}
         />
+        <Route path="/OrderDetails/:ordernumber" element={<OrderDetails />} />
         <Route path="/order" element={<OrderDashboard></OrderDashboard>} />
       </Routes>
     </BRouter>

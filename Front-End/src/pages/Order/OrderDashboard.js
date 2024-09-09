@@ -204,7 +204,18 @@ function OrderDashboard() {
           </TableHead>
           <TableBody>
             {orderData.map((order) => (
-              <TableRow key={order.OrderNumber}>
+              <TableRow
+                key={order.OrderNumber}
+                component={Link} // Make the Box a Link component
+                to={`/OrderDetails/${order.OrderNumber}`}
+                sx={{
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#F1F1F1", // Optional hover effect
+                  },
+                }}
+              >
                 <TableCell>{order.OrderNumber}</TableCell>
                 <TableCell>{order.StartDate}</TableCell>
                 <TableCell>{order.EndDate}</TableCell>
