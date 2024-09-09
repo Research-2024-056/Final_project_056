@@ -155,7 +155,7 @@ function SideNav({ open, handleDrawerClose }) {
 
                     }
                 }}>
-                    <ListItemButton>
+                    <ListItemButton to='/SewingDashboard'>
                         <ListItemIcon>
                             <LeaderboardIcon sx={{ color: "#ffffff" }} />
                         </ListItemIcon>

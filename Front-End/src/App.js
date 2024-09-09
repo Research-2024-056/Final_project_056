@@ -11,6 +11,8 @@ import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDa
 import LookUp_performance from "./pages/WorkforceMap_component/LookUp_performance";
 import Dynamic_seat_planner from "./pages/WorkforceMap_component/Dynamic_seat_planner";
 import Labor_efficiency_analysis from "./pages/WorkforceMap_component/Labor_efficiency_analysis";
+import AddSewingMachine from "./pages/Predictive_Maintenance/AddSewingMachine";
+import SewingDashboard from "./pages/Predictive_Maintenance/SewingDashboard";
 
 
 
@@ -32,6 +34,9 @@ function App() {
         <Route exact path="/DynamicSeatPlanner" element={<Dynamic_seat_planner></Dynamic_seat_planner>} />
         <Route exact path="/LaborEfficiencyAnalysis" element={<Labor_efficiency_analysis></Labor_efficiency_analysis>} />
 
+        {/*Predictive Maintenance */}
+        <Route exact path="/AddSewingMachine" element={<AddSewingMachine></AddSewingMachine>} />
+        <Route exact path="/SewingDashboard" element={<SewingDashboard></SewingDashboard>} />
 
       </Routes>
     </BRouter>
