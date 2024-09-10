@@ -3,11 +3,15 @@ import { BrowserRouter as BRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Common/Dashboard";
 import PreProductionMain from "./pages/PreProduction_component/PreProductionDasboard";
 import Durabilitycheck from "./pages/PreProduction_component/Durability_check";
+import PreProductDecision from "./pages/PreProduction_component/Pre_Product_Decision";
+
+// Needle part
 import MachineSelect from "./pages/NeedlePerformance/MachineSelect";
 import NeedleDashboard from "./pages/NeedlePerformance/NeedleDashboard";
 import OrderDashboard from "./pages/Order/OrderDashboard";
 import NewOrder from "./pages/Order/NewOrder";
 import OrderDetails from "./pages/Order/OrderDetails";
+
 // Workforce Map
 import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDashboard";
 import LookUp_performance from "./pages/WorkforceMap_component/LookUp_performance";
@@ -33,6 +37,11 @@ function App() {
           path="/Durabilitycheck"
           element={<Durabilitycheck></Durabilitycheck>}
         />
+        <Route
+          exact
+          path="/PreProductDecision"
+          element={<PreProductDecision></PreProductDecision>}
+        />
 
         {/* Workforce Map Page URLs */}
         <Route
@@ -55,6 +64,8 @@ function App() {
           path="/LaborEfficiencyAnalysis"
           element={<Labor_efficiency_analysis></Labor_efficiency_analysis>}
         />
+
+        
         <Route
           exact
           path="/machineselect"
@@ -67,27 +78,7 @@ function App() {
         />
         <Route path="/OrderDetails/:ordernumber" element={<OrderDetails />} />
         <Route path="/order" element={<OrderDashboard></OrderDashboard>} />
-        <Route
-          exact
-          path="/WorkforceMapDash"
-          element={<WorkforceMapDashboard></WorkforceMapDashboard>}
-        />
-        <Route
-          exact
-          path="/LookUpPerformance"
-          element={<LookUp_performance></LookUp_performance>}
-        />
-        <Route
-          exact
-          path="/DynamicSeatPlanner"
-          element={<Dynamic_seat_planner></Dynamic_seat_planner>}
-        />
-        <Route
-          exact
-          path="/LaborEfficiencyAnalysis"
-          element={<Labor_efficiency_analysis></Labor_efficiency_analysis>}
-        />
-
+       
         {/*Predictive Maintenance */}
         <Route
           exact
