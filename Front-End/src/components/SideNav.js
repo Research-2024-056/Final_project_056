@@ -174,22 +174,19 @@ function SideNav({ open, handleDrawerClose }) {
             },
           }}
         >
-          <ListItemButton>
-            <ListItemIcon>
-              <LeaderboardIcon sx={{ color: "#ffffff" }} />
-            </ListItemIcon>
-            <ListItemText
-              primary="Machine Performance"
-              sx={{
-                color: "#ffffff",
-                fontWeight: 400,
-                textTransform: "uppercase",
-                "& .css-10hburv-MuiTypography-root": {
-                  fontSize: "14px",
-                },
-              }}
-            />
-          </ListItemButton>
+         <ListItemButton to='/SewingDashboard'>
+                        <ListItemIcon>
+                            <LeaderboardIcon sx={{ color: "#ffffff" }} />
+                        </ListItemIcon>
+                        <ListItemText primary="Machine Performance" sx={{
+                            color: "#ffffff",
+                            fontWeight: 400,
+                            textTransform: "uppercase",
+                            '& .css-10hburv-MuiTypography-root': {
+                                fontSize: "14px"
+                            }
+                        }} />
+                    </ListItemButton>
         </ListItem>
 
         <ListItem

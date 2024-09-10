@@ -25,7 +25,6 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd"; // Import the
 import { blue, red, green } from "@mui/material/colors";
 import * as XLSX from "xlsx";
 
-
 const SeatPlanner = () => {
   const [lines, setLines] = useState(1);
   const [employeesPerLine, setEmployeesPerLine] = useState(1);
@@ -35,10 +34,12 @@ const SeatPlanner = () => {
   const [unassignedLaborers, setUnassignedLaborers] = useState([]);
   const [isSeatPlanGenerated, setIsSeatPlanGenerated] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const generateSeatPlan = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
+    const startTime = Date.now();
+
     try {
       const response = await axios.post("http://127.0.0.1:5000/seat_plan", {
         num_lines: lines,
@@ -50,8 +51,17 @@ const SeatPlanner = () => {
       setShowBanner(false);
     } catch (error) {
       console.error("Error generating seat plan:", error);
+    } finally {
+      const elapsedTime = Date.now() - startTime;
+      const minimumDelay = 2000;
+      const remainingTime = minimumDelay - elapsedTime;
+
+      if (remainingTime > 0) {
+        setTimeout(() => setIsLoading(false), remainingTime);
+      } else {
+        setIsLoading(false);
+      }
     }
-    setIsLoading(false); // End loading
   };
 
   const handleClear = () => {
@@ -347,7 +357,12 @@ const SeatPlanner = () => {
             justifyContent: "center",
           }}
         >
-          <img alt='gif' mt='10px' src='https://i.gifer.com/ZC9Y.gif' width="10%"></img>
+          <img
+            alt="gif"
+            mt="10px"
+            src="https://i.gifer.com/ZC9Y.gif"
+            width="10%"
+          ></img>
         </Box>
       )}
 
@@ -356,7 +371,11 @@ const SeatPlanner = () => {
           <Grid item xs={12} key={`line-${lineIndex}`}>
             <Typography
               variant="h6"
-              sx={{ marginBottom: "10px", color: "#2E3B55", textAlign: "center" }}
+              sx={{
+                marginBottom: "10px",
+                color: "#2E3B55",
+                textAlign: "center",
+              }}
             >
               Production Line {lineIndex + 1}
             </Typography>
@@ -405,7 +424,11 @@ const SeatPlanner = () => {
             >
               <Typography
                 variant="h6"
-                sx={{ marginBottom: "10px", color: "#D32F2F", textAlign: "center" }}
+                sx={{
+                  marginBottom: "10px",
+                  color: "#D32F2F",
+                  textAlign: "center",
+                }}
               >
                 Removed Laborers
               </Typography>
@@ -420,9 +443,7 @@ const SeatPlanner = () => {
                         boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                       }}
                     >
-                      <CardContent
-                        sx={{ textAlign: "center", padding: "8px" }}
-                      >
+                      <CardContent sx={{ textAlign: "center", padding: "8px" }}>
                         <Avatar
                           sx={{
                             backgroundColor: red[500],

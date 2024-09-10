@@ -20,3 +20,5 @@ const projectFirestore = getDatabase(app);
 const auth = getAuth(app);
 
 export { auth, projectFirestore };
+
+
