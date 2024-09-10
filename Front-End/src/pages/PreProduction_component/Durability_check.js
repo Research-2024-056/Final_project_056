@@ -285,7 +285,40 @@ function Durability_check() {
     setCompleted({});
   };
 
+  const handledone = () => {
+    // Reload the page
+    window.location.reload();
+  };
 
+  function getDurabilityStatement(prediction, prediction2, prediction3) {
+    let statements = [];
+
+    const addStatement = (prediction) => {
+        if (prediction >= 80 && prediction <= 100) {
+            return `Durability: ${prediction.toFixed(2)}%\nClothing is in excellent condition, with only minor signs of wear.\n Estimated Lifespan: 3 to 5 years.`;
+        } else if (prediction >= 60 && prediction < 80) {
+            return `Durability: ${prediction.toFixed(2)}%\nModerate wear is visible, but the clothing is still functional and looks good.\nEstimated Lifespan: 2 to 3 years.`;
+        } else if (prediction >= 20 && prediction < 60) {
+            return `Durability: ${prediction.toFixed(2)}%\nSignificant signs of wear and tear. Fabric may start to fade, lose shape, or have minor issues like pilling or small holes.\nEstimated Lifespan: 1 to 2 years.`;
+        } else if (prediction >= 10 && prediction < 20) {
+            return `Durability: ${prediction.toFixed(2)}%\nMajor signs of wear, possibly nearing the end of its life. Fabric may be thin, stretched, or can be damaged.\nEstimated Lifespan: 6 months to 1 year.`;
+        } else {
+            return `Durability: ${prediction.toFixed(2)}%\nCondition not within defined ranges.`;
+        }
+    };
+
+    if (prediction) {
+        statements.push(addStatement(prediction));
+    }
+    if (prediction2) {
+        statements.push(addStatement(prediction2));
+    }
+    if (prediction3) {
+        statements.push(addStatement(prediction3));
+    }
+
+    return statements.join('\n\n');
+}
 
   return (
     <PageMain>
@@ -424,7 +457,7 @@ function Durability_check() {
                           />
 
                           <Grid sx={{ marginTop: "20px" }}>
-                            <Button type="submit" variant='outlined'>Predict</Button>
+                            <Button  type="submit" variant='outlined'>Predict</Button>
 
                           </Grid>
                         </center>
@@ -611,7 +644,7 @@ function Durability_check() {
                           />
 
                           <Grid sx={{ marginTop: "20px" }}>
-                            <Button type="submit" variant='outlined'>Predict</Button>
+                            <Button  type="submit" variant='outlined'>Predict</Button>
 
                           </Grid>
                         </center>
@@ -639,7 +672,7 @@ function Durability_check() {
                 <React.Fragment >
                   <center>
                     <Typography Heading sx={{ lineHeight: 1, fontWeight: "500", fontSize: "1.425rem", fontFamily: "poppins", marginTop: "60px" }}>
-                      Durability For Cotton Is
+                      Durability IS
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px' }}>
                       <Box
@@ -681,6 +714,32 @@ function Durability_check() {
                       </Box>
                     </Box>
 
+                    <Box sx={{ marginTop: '40px' }}>
+        {prediction && (
+          <Typography sx={{ fontSize: '1rem', marginTop: '20px', fontFamily: 'poppins' }}>
+            {getDurabilityStatement(prediction)}
+          </Typography>
+        )}
+        {prediction2 && (
+          <Typography sx={{ fontSize: '1rem', marginTop: '20px', fontFamily: 'poppins' }}>
+            {getDurabilityStatement(prediction2)}
+          </Typography>
+        )}
+        {prediction3 && (
+          <Typography sx={{ fontSize: '1rem', marginTop: '20px', fontFamily: 'poppins' }}>
+            {getDurabilityStatement(prediction3)}
+          </Typography>
+        )}
+      </Box>
+                    
+                    < Button
+              
+                  onClick={handledone}
+                  sx={{ mr: 1  , marginTop:"20px"}}
+                  variant="outlined"
+                >
+                  Done
+                </Button>
 
                   </center>
                 </React.Fragment>
@@ -696,7 +755,7 @@ function Durability_check() {
                   Back
                 </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-
+                
                 {activeStep !== steps.length &&
                   (completed[activeStep] ? (
                     <Typography variant="caption" sx={{ display: 'inline-block' }}>
