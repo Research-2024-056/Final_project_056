@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import PageMain from "../../components/PageMain";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -24,6 +25,7 @@ export default function AddSewingMachine({ children }) {
   const [Dust_Remove, setDust_Remove] = useState("");
   const [Serial_No, setSerialNo] = useState("");
   const [status, setStatus] = useState("Off");
+  const navigate = useNavigate();
 
   const submitForm = () => {
     if (
@@ -65,11 +67,11 @@ export default function AddSewingMachine({ children }) {
       };
       console.log("came 1");
       axios
-        .post("http://localhost:5000/predict/Inventory", ob)
+        .post("http://localhost:5005/predict/Inventory", ob)
         .then((res) => {
           console.log(res.data);
           //   toast.success("New swing machine added");
-          //   navigate('/')
+            navigate('/SewingDashboard')
         })
         .catch((err) => {
           console.log(err);
@@ -103,13 +105,13 @@ export default function AddSewingMachine({ children }) {
               }}
             >
               <TextField
-                label="Brand"
+                label="Brand (Juki)"
                 variant="outlined"
                 sx={{ width: "80ch" }}
                 onChange={(e) => setBrands(e.target.value)}
               />
               <TextField
-                label="Type"
+                label="Type (Single Needle)"
                 variant="outlined"
                 sx={{ width: "80ch" }}
                 onChange={(e) => setType(e.target.value)}
@@ -133,7 +135,7 @@ export default function AddSewingMachine({ children }) {
                 onChange={(e) => setM_Year(e.target.value)}
               />
               <TextField
-                label="Fabric Type"
+                label="Fabric Type (Heavy [GSM = 150 - 300] / Medium [GSM = 300 - 500]) "
                 variant="outlined"
                 sx={{ width: "80ch" }}
                 onChange={(e) => setFabric_Type(e.target.value)}
@@ -156,7 +158,7 @@ export default function AddSewingMachine({ children }) {
             }}
           >
             <TextField
-              label="Take up Spring"
+              label="Take up Spring Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -164,7 +166,7 @@ export default function AddSewingMachine({ children }) {
               onChange={(e) => setTake_up_Spring(e.target.value)}
             />
             <TextField
-              label="Take up Rubber"
+              label="Take up Rubber Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -181,7 +183,7 @@ export default function AddSewingMachine({ children }) {
             }}
           >
             <TextField
-              label="Bobbin Case"
+              label="Bobbin Case Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -189,7 +191,7 @@ export default function AddSewingMachine({ children }) {
               onChange={(e) => setBobbin_Case(e.target.value)}
             />
             <TextField
-              label="Feed Dog"
+              label="Feed Dog Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -207,7 +209,7 @@ export default function AddSewingMachine({ children }) {
             }}
           >
             <TextField
-              label="Presser Foot"
+              label="Presser Foot Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -215,7 +217,7 @@ export default function AddSewingMachine({ children }) {
               onChange={(e) => setPresser_Foot(e.target.value)}
             />
             <TextField
-              label="Timing Components"
+              label="Timing Components Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -232,7 +234,7 @@ export default function AddSewingMachine({ children }) {
             }}
           >
             <TextField
-              label="Oil Filling"
+              label="Oil Filling Used Hours"
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -240,7 +242,7 @@ export default function AddSewingMachine({ children }) {
               onChange={(e) => setOil_Filling(e.target.value)}
             />
             <TextField
-              label="Dust Remove"
+              label="Dust Remove "
               variant="outlined"
               type="number"
               sx={{ width: "80ch" }}
@@ -283,7 +285,7 @@ export default function AddSewingMachine({ children }) {
             onClick={submitForm}
           >
             {" "}
-            PLUS
+            Add
           </Button>
         </Box>
     

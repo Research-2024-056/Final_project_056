@@ -178,7 +178,7 @@ function SideNav({ open, handleDrawerClose }) {
                         <ListItemIcon>
                             <LeaderboardIcon sx={{ color: "#ffffff" }} />
                         </ListItemIcon>
-                        <ListItemText primary="Machine Performance" sx={{
+                        <ListItemText primary="Machine Maintenance" sx={{
                             color: "#ffffff",
                             fontWeight: 400,
                             textTransform: "uppercase",

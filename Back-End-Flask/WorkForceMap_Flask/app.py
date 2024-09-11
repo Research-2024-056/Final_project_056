@@ -189,22 +189,35 @@ def get_employee_performance(emp_no):
 
 # Calculate performance score based on employee evolution data
 def calculate_performance(employee, filter_option):
+    # Convert evolution columns to numeric values, replace non-numeric values with NaN
+    evolutions = pd.to_numeric([
+        employee['Evolution_01'],
+        employee['Evolution_02'],
+        employee['Evolution_03'],
+        employee['Evolution_04'],
+        employee['Evolution_05'],
+        employee['Last_Evolution']
+    ], errors='coerce')
+
+    # Filter out NaN values and calculate the average or return Last_Evolution based on filter_option
+    evolutions = evolutions[~pd.isna(evolutions)]
+    
+    if len(evolutions) == 0:
+        return 0  # If there are no valid numeric evolutions, return 0 or handle it as needed
+
     if filter_option == 'average':
-        evolutions = [
-            employee['Evolution_01'],
-            employee['Evolution_02'],
-            employee['Evolution_03'],
-            employee['Evolution_04'],
-            employee['Evolution_05'],
-            employee['Last_Evolution']
-        ]
         return sum(evolutions) / len(evolutions)
     elif filter_option == 'last_evolution':
         return employee['Last_Evolution']
 
+
 # Assign high-performing laborers to positions
 @app.route('/seat_plan', methods=['POST'])
+@cross_origin() 
 def seat_plan():
+    # Reload the dataset after modifying it
+    data = pd.read_csv('Employee_Evolution.csv')
+
     num_lines = request.json['num_lines']
     employees_per_line = request.json['employees_per_line']
     filter_option = request.json.get('filter_option', 'average')
@@ -230,17 +243,27 @@ def seat_plan():
 
 @app.route('/unassigned_laborers', methods=['GET'])
 def get_unassigned_laborers():
-    assigned_emp_nos = request.args.getlist('assigned_emp_nos')
-    
-    if 'Emp_No' not in data.columns:
-        return jsonify([])  # Return an empty list if column is missing
+    try:
+        data = pd.read_csv('Employee_Evolution.csv')
+        assigned_emp_nos = request.args.getlist('assigned_emp_nos')
 
-    # Filter out unassigned laborers
-    unassigned = data[~data['Emp_No'].isin(assigned_emp_nos)][['Emp_No', 'Name', 'Performance']].to_dict(orient='records')
+        # Ensure 'Emp_No' exists
+        if 'Emp_No' not in data.columns:
+            return jsonify([])  # Return an empty list if column is missing
+
+        # Check if 'Performance' column exists, otherwise calculate it
+        if 'Performance' not in data.columns:
+            data['Performance'] = data.apply(lambda employee: calculate_performance(employee, 'average'), axis=1)
+
+        # Filter out unassigned laborers
+        unassigned = data[~data['Emp_No'].isin(assigned_emp_nos)][['Emp_No', 'Name', 'Performance']].to_dict(orient='records')
+
+        return jsonify(unassigned)
     
-    
-    # Return the result as JSON
-    return jsonify(unassigned)
+    except Exception as e:
+        app.logger.error(f"Error fetching unassigned laborers: {str(e)}")
+        return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500
+
 
 @app.route('/predict_performance/<int:emp_no>', methods=['GET'])
 def predict_performance(emp_no):
