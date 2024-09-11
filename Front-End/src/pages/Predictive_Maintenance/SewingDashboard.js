@@ -7,11 +7,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PageMain from "../../components/PageMain";
 
-
-
-
 export default function SewingDashboard({ children }) {
- 
   const navigate = useNavigate();
 
   const [working_swing, setWorkingSwing] = useState([]);
@@ -20,7 +16,7 @@ export default function SewingDashboard({ children }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/collection/Inventory/working")
+      .get("http://localhost:5005/collection/Inventory/working")
       .then((res) => {
         console.log(res.data);
         setWorkingSwing(res.data);
@@ -30,7 +26,7 @@ export default function SewingDashboard({ children }) {
       });
 
     axios
-      .get("http://localhost:5000/collection/Inventory/maintenance-check")
+      .get("http://localhost:5005/collection/Inventory/maintenance-check")
       .then((res) => {
         console.log(res.data);
         setDueSwing(res.data);
@@ -40,7 +36,7 @@ export default function SewingDashboard({ children }) {
       });
 
     axios
-      .get("http://localhost:5000/collection/Inventory/all")
+      .get("http://localhost:5005/collection/Inventory/all")
       .then((res) => {
         console.log(res.data);
         setAllMachine(res.data);
@@ -63,9 +59,67 @@ export default function SewingDashboard({ children }) {
     { field: "M_Year", headerName: "Manufacture Year", flex: 1 },
   ];
 
-  const getCellStyles = (value) => ({
-    backgroundColor: value < 100 ? "#dc143c" : "inherit",
+  const getCellStyles = (value) => ({ 
+    backgroundColor: value < 24 ? "#dc143c" : "inherit",
+    cursor: "pointer", // Make the cursor a pointer to indicate it's clickable
   });
+
+  const  deleteItem = (no) => {
+    if (window.confirm("Are you sure you want to delete it?")) {
+    const ob = {
+      "serial_no":no
+    }
+    axios.post("http://localhost:5005/collection/Inventory/delete",ob).then((res)=>{
+      window.location.reload(); // This will reload the page
+    }).catch((err)=>{
+      console.log(err)
+    })
+ 
+  }
+}
+  const handleCellClick = (row, val) => {
+    const ob = {
+      Brand: row.Brand,
+      Type: row.Type,
+      Fabric_Type: row.Fabric_Type,
+      M_Year: row.M_Year,
+      Serial_No: row.Serial_No,
+      usageDict: {
+        "Take up Spring": Number(0),
+        "Take up Rubber": Number(0),
+        "Bobbin Case": Number(0),
+        "Feed Dog": Number(0),
+        "Presser Foot": Number(0),
+        "Tension Assembly": Number(0),
+        "Hook Assembly": Number(0),
+        "Timing Components": Number(0),
+        "Oil Filling": Number(0),
+        "Dust Remove": Number(0),
+      },
+      status:row.status
+    };
+    if (window.confirm("Are you sure you replace it?")) {
+      // Send the data to the backend using axios
+      axios
+        .post("http://localhost:5005/predictupdate/Inventory", ob)
+        .then((response) => {
+          const ob2 = {
+            serial_no:response.data.Serial_No,
+            column_name: val,
+            column_value: response.data[val]
+          }
+          axios.post("http://localhost:5005/collection/Inventory/update",ob2).then((res)=>{
+            window.location.reload(); // This will reload the page
+          }).catch((err)=>{
+            console.log(err)
+          })
+        })
+        .catch((error) => {
+          console.error("Error sending data:", error);
+          alert("Failed to send data!");
+        });
+    }
+  };
 
   const column3 = [
     {
@@ -88,6 +142,16 @@ export default function SewingDashboard({ children }) {
     { field: "Take up Spring", headerName: "Take up Spring", flex: 1 },
     { field: "Tension Assembly", headerName: "Tension Assembly", flex: 1 },
     { field: "Timing Components", headerName: "Timing Components", flex: 1 },
+    { field: "Action", headerName: "Action", flex: 1,
+      renderCell: (params) => (
+        <div style={{color:'red'}}
+         
+          onClick={() => deleteItem(params.row.Serial_No)}
+        >
+        X
+        </div>
+      ),
+     },
   ];
 
   const columns1 = [
@@ -103,75 +167,160 @@ export default function SewingDashboard({ children }) {
       headerName: "Bobbin Case",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Bobbin Case")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Dust Remove",
       headerName: "Dust Remove",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row, "Dust Remove")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Feed Dog",
       headerName: "Feed Dog",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row, "Feed Dog")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Hook Assembly",
       headerName: "Hook Assembly",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Hook Assembly")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "M_Year",
       headerName: "M_Year",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row, "M_Year")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Oil Filling",
       headerName: "Oil Filling",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Oil Filling")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Presser Foot",
       headerName: "Presser Foot",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Presser Foot")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Take up Rubber",
       headerName: "Take up Rubber",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Take up Rubber")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Take up Spring",
       headerName: "Take up Spring",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Take up Spring")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Tension Assembly",
       headerName: "Tension Assembly",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Tension Assembly")}
+        >
+          {params.value}
+        </div>
+      ),
     },
     {
       field: "Timing Components",
       headerName: "Timing Components",
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
+      renderCell: (params) => (
+        <div
+          
+          onClick={() => handleCellClick(params.row,"Timing Components")}
+        >
+          {params.value}
+        </div>
+      ),
     },
   ];
 
   return (
     <PageMain title="Dynamic Seat Planner">
-    <Box >
-     
-
-
+      <Box>
         <Grid container spacing={2}>
           <Grid item xs={10}>
             {" "}
@@ -183,7 +332,7 @@ export default function SewingDashboard({ children }) {
               color="primary"
               sx={{ marginTop: 4 }}
               variant="contained"
-              onClick={() => navigate("/Sewing/add")}
+              onClick={() => navigate("/AddSewingMachine")}
             >
               {" "}
               Add New
@@ -191,7 +340,7 @@ export default function SewingDashboard({ children }) {
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ paddingTop: 5 }}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <h3 style={{ textAlign: "center" }}>Working Machine</h3>
             <Box
               m="0 0 0 0"
@@ -208,7 +357,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "navy",
+                  backgroundColor: "navyblue",
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -229,12 +378,12 @@ export default function SewingDashboard({ children }) {
               <DataGrid
                 rows={working_swing}
                 columns={columns}
-                components={{ Toolbar: GridToolbar }}
                 getRowId={(row) => row.Serial_No}
+                slots={{ toolbar: GridToolbar }}
               />
             </Box>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             <h3 style={{ textAlign: "center" }}>Due Maintenance</h3>
             <Box
               m="0 0 0 0"
@@ -275,8 +424,8 @@ export default function SewingDashboard({ children }) {
               <DataGrid
                 rows={due_swing}
                 columns={columns1}
-                components={{ Toolbar: GridToolbar }}
                 getRowId={(row) => row.Serial_No}
+                slots={{ toolbar: GridToolbar }}
                 getCellClassName={(params) => {
                   const fieldsToCheck = [
                     "Bobbin Case",
@@ -292,7 +441,7 @@ export default function SewingDashboard({ children }) {
                     "Timing Components",
                   ];
                   return fieldsToCheck.includes(params.field) &&
-                    params.value < 100
+                    params.value < 24
                     ? "low-value-cell"
                     : "";
                 }}
@@ -344,8 +493,7 @@ export default function SewingDashboard({ children }) {
             </Box>
           </Grid>
         </Grid>
-     
-    </Box>
+      </Box>
     </PageMain>
   );
 }
