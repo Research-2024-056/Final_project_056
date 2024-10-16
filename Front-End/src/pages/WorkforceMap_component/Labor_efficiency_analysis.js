@@ -459,7 +459,7 @@ export default function Labor_efficiency_analysis() {
                     mb: 2,
                   }}
                 >
-                  Labor Efficiency: {laborEfficiency}%
+                  Labor Efficiency: {laborEfficiency}
                 </Typography>
 
                 <Typography

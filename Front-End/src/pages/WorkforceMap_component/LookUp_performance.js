@@ -10,8 +10,7 @@ import {
   Modal,
   Switch,
 } from "@mui/material";
-import TextField from "@material-ui/core/TextField";
-
+import TextField from '@mui/material/TextField';
 import AddEmployeeModal from "../../components/WorkforceMap/AddEmployeeModal";
 import PerformanceTable from "../../components/WorkforceMap/PerformanceTable";
 import SewingActivityModal from "../../components/WorkforceMap/SewingActivityModal";

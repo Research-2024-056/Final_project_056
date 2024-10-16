@@ -25,7 +25,6 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd"; // Import the
 import { blue, red, green } from "@mui/material/colors";
 import * as XLSX from "xlsx";
 
-
 const SeatPlanner = () => {
   const [lines, setLines] = useState(1);
   const [employeesPerLine, setEmployeesPerLine] = useState(1);
@@ -35,7 +34,7 @@ const SeatPlanner = () => {
   const [unassignedLaborers, setUnassignedLaborers] = useState([]);
   const [isSeatPlanGenerated, setIsSeatPlanGenerated] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const generateSeatPlan = async () => {
     setIsLoading(true);
@@ -358,7 +357,12 @@ const SeatPlanner = () => {
             justifyContent: "center",
           }}
         >
-          <img alt='gif' mt='10px' src='https://i.gifer.com/ZC9Y.gif' width="10%"></img>
+          <img
+            alt="gif"
+            mt="10px"
+            src="https://i.gifer.com/ZC9Y.gif"
+            width="10%"
+          ></img>
         </Box>
       )}
 
@@ -367,15 +371,45 @@ const SeatPlanner = () => {
           <Grid item xs={12} key={`line-${lineIndex}`}>
             <Typography
               variant="h6"
-              sx={{ marginBottom: "10px", color: "#2E3B55", textAlign: "center" }}
+              sx={{
+                marginBottom: "20px",
+                color: "#1E3A8A", // Use a darker blue for a more professional tone
+                textAlign: "center",
+                fontWeight: "bold", // Emphasize the title for better visibility
+              }}
             >
               Production Line {lineIndex + 1}
             </Typography>
-            <Grid container spacing={1} justifyContent="center">
+
+            <Grid
+              container
+              justifyContent="center"
+              sx={{ marginBottom: "10px" }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#4CAF50",
+                  color: "#fff",
+                  textTransform: "none", 
+                  padding: "10px 20px", 
+                  "&:hover": {
+                    backgroundColor: "#388E3C",
+                  },
+                }}
+              >
+                Assign
+              </Button>
+            </Grid>
+
+            
+
+            <Grid container spacing={2} justifyContent="center">
               {renderSeats(line, lineIndex)}
             </Grid>
           </Grid>
         ))}
+
         {showBanner && (
           <Box
             sx={{
@@ -416,7 +450,11 @@ const SeatPlanner = () => {
             >
               <Typography
                 variant="h6"
-                sx={{ marginBottom: "10px", color: "#D32F2F", textAlign: "center" }}
+                sx={{
+                  marginBottom: "10px",
+                  color: "#D32F2F",
+                  textAlign: "center",
+                }}
               >
                 Removed Laborers
               </Typography>
@@ -431,9 +469,7 @@ const SeatPlanner = () => {
                         boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                       }}
                     >
-                      <CardContent
-                        sx={{ textAlign: "center", padding: "8px" }}
-                      >
+                      <CardContent sx={{ textAlign: "center", padding: "8px" }}>
                         <Avatar
                           sx={{
                             backgroundColor: red[500],

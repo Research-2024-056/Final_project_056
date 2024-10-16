@@ -221,7 +221,7 @@ function SideNav({ open, handleDrawerClose }) {
       <List>
         <ListItem
           disablePadding
-          sx={{
+          sx={{ marginTop: "85%",
             "&:hover": {
               backgroundColor: "#333a48",
             },
