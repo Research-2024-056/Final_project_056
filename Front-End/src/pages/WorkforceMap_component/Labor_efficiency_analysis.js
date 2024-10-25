@@ -34,7 +34,6 @@ export default function Labor_efficiency_analysis() {
   const [errors, setErrors] = useState({});
   const [laborEfficiency, setLaborEfficiency] = useState(null);
   const [efficiencyGrade, setEfficiencyGrade] = useState("");
-  const [remaining, setRemaining] = useState(null);
   const [expanded, setExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -133,7 +132,6 @@ export default function Labor_efficiency_analysis() {
         newEvolutionData
       );
       alert("Data inserted successfully!");
-      setRemaining(response.data.remaining);
     } catch (error) {
       console.error("Error inserting data:", error);
     }
