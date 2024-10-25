@@ -212,9 +212,9 @@ def calculate_performance(employee, filter_option):
 
 
 # Assign high-performing laborers to positions
-@app.route('/seat_plan', methods=['POST'])
-@cross_origin() 
-def seat_plan():
+# @app.route('/seat_plan', methods=['POST'])
+# @cross_origin() 
+# def seat_plan():
     # Reload the dataset after modifying it
     data = pd.read_csv('Employee_Evolution.csv')
 
@@ -237,6 +237,89 @@ def seat_plan():
                 employee_index += 1
             else:
                 line_plan.append(None)  # No more employees to assign
+        seat_plan.append(line_plan)
+
+    return jsonify(seat_plan)
+
+# Endpoint to save assigned tasks
+@app.route('/save_assigned_tasks', methods=['POST'])
+def save_assigned_tasks():
+    try:
+        assigned_tasks = request.json['assignedTasks']
+        with open('assigned_tasks.json', 'w') as f:
+            json.dump(assigned_tasks, f)
+        return jsonify({"message": "Tasks saved successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint to load assigned tasks
+@app.route('/load_assigned_tasks', methods=['GET'])
+def load_assigned_tasks():
+    try:
+        if os.path.exists('assigned_tasks.json'):
+            with open('assigned_tasks.json', 'r') as f:
+                assigned_tasks = json.load(f)
+            return jsonify(assigned_tasks), 200
+        else:
+            return jsonify([]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/delete_task', methods=['POST'])
+def delete_task():
+    task_id = request.json.get('taskId')  # Get task ID from request
+    global assigned_tasks
+    
+    # Find and delete the task
+    assigned_tasks = [task for task in assigned_tasks if task['productId'] != task_id]
+    
+    return jsonify({"message": "Task deleted successfully!"}), 200
+
+# @app.route('/update_task', methods=['POST'])
+# def update_task():
+#     task_id = request.json.get('taskId')  # Get task ID from request
+#     updated_end_date = request.json.get('endDate')  # Get the new end date
+#     global assigned_tasks
+
+#     # Find and update the task
+#     for task in assigned_tasks:
+#         if task['productId'] == task_id:  # Match by productId or any unique identifier
+#             task['endDate'] = updated_end_date  # Update only the end date
+#             return jsonify({"message": "Task updated successfully!"}), 200
+
+#     return jsonify({"error": "Task not found!"}), 404
+
+
+# Modified seat plan generation to exclude already assigned employees
+@app.route('/seat_plan', methods=['POST'])
+@cross_origin() 
+def seat_plan():
+    data = pd.read_csv('Employee_Evolution.csv')
+
+    num_lines = request.json['num_lines']
+    employees_per_line = request.json['employees_per_line']
+    filter_option = request.json.get('filter_option', 'average')
+    assigned_emp_nos = request.json.get('exclude_assigned', [])
+
+    data['Performance'] = data.apply(lambda employee: calculate_performance(employee, filter_option), axis=1)
+
+    # Exclude already assigned employees
+    filtered_data = data[~data['Emp_No'].isin(assigned_emp_nos)]
+    
+    sorted_employees = filtered_data.sort_values(by='Performance', ascending=False).to_dict(orient='records')
+
+    seat_plan = []
+    employee_index = 0
+
+    for line in range(num_lines):
+        line_plan = []
+        for seat in range(employees_per_line):
+            if employee_index < len(sorted_employees):
+                line_plan.append(sorted_employees[employee_index])
+                employee_index += 1
+            else:
+                line_plan.append(None)
         seat_plan.append(line_plan)
 
     return jsonify(seat_plan)
