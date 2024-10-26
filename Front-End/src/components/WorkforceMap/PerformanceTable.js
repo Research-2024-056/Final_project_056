@@ -22,8 +22,8 @@ const PerformanceTable = ({
   onSort,
   onOpenPopup,
   onOpenPopupSwingActivity,
+  assignedActivities,
 }) => {
-  
   return (
     <TableContainer component={Paper} sx={{ width: "100%", overflowX: "auto" }}>
       <Table size="small" aria-label="Performance Table">
@@ -168,7 +168,14 @@ const PerformanceTable = ({
                       onClick={() => onOpenPopupSwingActivity(row)}
                       color="secondary"
                     >
-                      <ContactEmergencyIcon fontSize="small" />
+                      {assignedActivities[row.Emp_No]?.length > 0 ? (
+                        <BookmarkAddedIcon
+                          fontSize="small"
+                          sx={{ color: "green" }}
+                        />
+                      ) : (
+                        <ContactEmergencyIcon fontSize="small" />
+                      )}
                     </IconButton>
                   )}
               </TableCell>

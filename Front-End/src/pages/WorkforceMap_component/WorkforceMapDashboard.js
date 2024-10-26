@@ -42,7 +42,7 @@ function WorkforceMapDashboard() {
         const data = response.data;
         const formattedData = Object.keys(data).map((key) => ({
           evolution: key,
-          average: data[key],
+          average: parseFloat(data[key]).toFixed(5), 
         }));
         setEvolutionData(formattedData);
       })
@@ -85,13 +85,17 @@ function WorkforceMapDashboard() {
       axios
         .get(`http://localhost:5000/predict_performance/${emp_no}`)
         .then((response) => {
-          const { predicted_performance, Actual_performance } = response.data;
-          const gapValue = (Actual_performance - predicted_performance).toFixed(3);
+          let { predicted_performance, Actual_performance } = response.data;
+
+          predicted_performance = parseFloat(predicted_performance).toFixed(3);
+          const gapValue = (Actual_performance - predicted_performance).toFixed(
+            3
+          );
           setGap(gapValue);
           const formattedData = [
             {
               name: "Performance",
-              predicted_performance,
+              predicted_performance: parseFloat(predicted_performance),
               Actual_performance,
             },
           ];

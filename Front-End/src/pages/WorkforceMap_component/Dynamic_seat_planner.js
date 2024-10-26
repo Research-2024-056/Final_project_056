@@ -3,6 +3,12 @@ import axios from "axios";
 import PageMain from "../../components/PageMain";
 import DownloadIcon from "@mui/icons-material/Download";
 import Typography from "@mui/material/Typography";
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
   Box,
   FormControlLabel,
@@ -55,25 +61,25 @@ const SeatPlanner = () => {
     setEditTaskData({
       productId: taskToEdit.productId,
       startDate: taskToEdit.startDate,
+      smv: taskToEdit.smv,
       endDate: taskToEdit.endDate,
     });
     setIsEditing(true);
   };
-   // Handle input changes for editable fields
-   const handleInputChange = (e) => {
+  // Handle input changes for editable fields
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
-    // Save changes and exit edit mode
-    const handleSaveChanges = () => {
-      // Update the task details in the list (assuming setAssignedTasks is available)
-      assignedTasks[selectedTaskTab] = {
-        ...assignedTasks[selectedTaskTab],
-        ...editTaskData,
-      };
-      setIsEditing(false); // Exit edit mode
+  // Save changes and exit edit mode
+  const handleSaveChanges = () => {
+    // Update the task details in the list (assuming setAssignedTasks is available)
+    assignedTasks[selectedTaskTab] = {
+      ...assignedTasks[selectedTaskTab],
+      ...editTaskData,
     };
-  
+    setIsEditing(false); // Exit edit mode
+  };
 
   const handleDeleteTask = (taskIndex) => {
     const taskToDelete = assignedTasks[taskIndex];
@@ -107,6 +113,7 @@ const SeatPlanner = () => {
   const [taskDetails, setTaskDetails] = useState({
     productId: "",
     teamId: "",
+    smv:"",
     laborCount: "",
     startDate: "",
     endDate: "",
@@ -206,10 +213,16 @@ const SeatPlanner = () => {
   };
 
   const handleAssignLaborers = () => {
-    if (!taskDetails.productId || !taskDetails.teamId || !taskDetails.laborCount || !taskDetails.startDate || !taskDetails.endDate) {
+    if (
+      !taskDetails.productId ||
+      !taskDetails.teamId ||
+      !taskDetails.laborCount ||
+      !taskDetails.startDate ||
+      !taskDetails.endDate
+    ) {
       alert("Please fill in all required fields.");
-      return; 
-  }
+      return;
+    }
     const laborers = seatPlan.flat().filter((emp) => emp);
     const newTask = {
       ...taskDetails,
@@ -416,7 +429,14 @@ const SeatPlanner = () => {
 
       {/* Show Task Tabs if selected */}
       {mainTab === "tasks" && (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", width: "600px", margin: "auto" }}>
+        <div
+          style={{
+            padding: "20px",
+            fontFamily: "Arial, sans-serif",
+            width: "600px",
+            margin: "auto",
+          }}
+        >
           {/* Task Tabs */}
           <div style={{ marginBottom: "20px" }}>
             <Tabs
@@ -431,7 +451,7 @@ const SeatPlanner = () => {
               style={{ borderBottom: "1px solid #ccc" }}
             >
               {assignedTasks.map((task, index) => (
-                <Tab key={index} label={`Task ${index + 1}`} />
+                <Tab key={index} label={task.productId} />
               ))}
             </Tabs>
           </div>
@@ -446,7 +466,9 @@ const SeatPlanner = () => {
                 boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <h3 style={{ marginBottom: "10px", fontSize: "20px" }}>Task Details</h3>
+              <h3 style={{ marginBottom: "10px", fontSize: "20px" }}>
+                Task Details
+              </h3>
 
               <p>
                 <strong>Product ID:</strong>{" "}
@@ -465,6 +487,20 @@ const SeatPlanner = () => {
               <p>
                 <strong>Team ID:</strong>{" "}
                 {assignedTasks[selectedTaskTab].teamId}
+              </p>
+              <p>
+                <strong>SMV:</strong>{" "}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="smv"
+                    value={editTaskData.smv}
+                    onChange={handleInputChange}
+                    style={inputStyle}
+                  />
+                ) : (
+                  assignedTasks[selectedTaskTab].smv
+                )}
               </p>
               <p>
                 <strong>Labor Count:</strong>{" "}
@@ -493,7 +529,7 @@ const SeatPlanner = () => {
                     value={editTaskData.endDate}
                     onChange={handleInputChange}
                     style={inputStyle}
-                    required 
+                    required
                   />
                 ) : (
                   assignedTasks[selectedTaskTab].endDate
@@ -501,7 +537,8 @@ const SeatPlanner = () => {
               </p>
 
               {/* Assigned Laborers Toggle Button */}
-              <button
+              <Button
+              variant="contained" color="success"
                 onClick={() => {
                   if (assignedLaborers.length > 0) {
                     setAssignedLaborers([]);
@@ -509,14 +546,23 @@ const SeatPlanner = () => {
                     fetchAssignedLaborers(selectedTaskTab, setAssignedLaborers);
                   }
                 }}
-                style={buttonStyle("#1976D2", "#e3f2fd")}
               >
-                {assignedLaborers.length > 0 ? "Hide Assigned Laborers" : "View Assigned Laborers"}
-              </button>
+                <VisibilityIcon/> 
+                {assignedLaborers.length > 0
+                  ? "Hide Laborers"
+                  :  "View Laborers"}
+              </Button>
 
               {/* Assigned Laborers List */}
               {assignedLaborers.length > 0 && (
-                <div style={{ marginTop: "10px", backgroundColor: "#e3f2fd", padding: "10px", borderRadius: "8px" }}>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    backgroundColor: "#e3f2fd",
+                    padding: "10px",
+                    borderRadius: "8px",
+                  }}
+                >
                   <h4>Assigned Laborers:</h4>
                   <ul>
                     {assignedLaborers.map((laborer) => (
@@ -529,25 +575,47 @@ const SeatPlanner = () => {
               )}
 
               {/* Edit, Save/Cancel, and Delete buttons */}
-              <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  marginTop: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
                 {isEditing ? (
                   <>
-                    <button onClick={handleSaveChanges} style={buttonStyle("#388E3C", "#e8f5e9")}>
+                    <Button
+                      onClick={handleSaveChanges}
+                      variant="contained" color="success"
+                    >
+                      <CheckCircleOutlineIcon style={{ marginRight: "4px" }}/>
                       Save
-                    </button>
-                    <button onClick={() => setIsEditing(false)} style={buttonStyle("#D32F2F", "#ffebee")}>
+                    </Button>
+                    <Button
+                      onClick={() => setIsEditing(false)}
+                      variant="outlined" color="error"
+                    >
+                       <CancelIcon style={{ marginRight: "4px" }} />
                       Cancel
-                    </button>
+                    </Button>
                   </>
                 ) : (
-                  <button onClick={() => handleEditTask(selectedTaskTab)} style={buttonStyle("#1976D2", "#e3f2fd")}>
+                  <Button
+                    onClick={() => handleEditTask(selectedTaskTab)}
+                    variant="outlined"
+                  >
+                    <EditIcon style={{ marginRight: "4px" }}/>
                     Edit Task
-                  </button>
+                  </Button>
                 )}
 
-                <button onClick={() => handleDeleteTask(selectedTaskTab)} style={buttonStyle("#D32F2F", "#ffebee")}>
+                <Button variant="outlined" color="error"
+                  onClick={() => handleDeleteTask(selectedTaskTab)}
+                  
+                >
+                  <DeleteOutlineIcon/>
                   Delete Task
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -622,17 +690,22 @@ const SeatPlanner = () => {
               Generate Seat Plan
             </Button>
             {isSeatPlanGenerated && (
+              <Button variant="outlined" color="error" onClick={handleClear}>
+                <CancelIcon style={{ marginRight: "4px" }} />
+                Clear
+              </Button>
+            )}
+            {isSeatPlanGenerated && (
               <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleClear}
+                variant="contained"
+                color="success"
+                onClick={() => setIsDrawerOpen(true)}
                 sx={{
-                  marginTop: { xs: "10px", md: "0" },
-                  width: { xs: "100%", sm: "auto" },
-                  marginLeft: { sm: "16px" },
+                  marginLeft: { sm: "50px" },
                 }}
               >
-                Clear
+                <AddTaskIcon style={{ marginRight: "4px" }} />
+                Assign
               </Button>
             )}
             {isSeatPlanGenerated && (
@@ -640,11 +713,6 @@ const SeatPlanner = () => {
                 variant="outlined"
                 color="success"
                 onClick={handleDownload}
-                sx={{
-                  marginTop: { xs: "10px", md: "0" },
-                  width: { xs: "100%", sm: "auto" },
-                  marginLeft: { sm: "16px" },
-                }}
               >
                 <DownloadIcon />
                 Download Seat Planner
@@ -683,28 +751,6 @@ const SeatPlanner = () => {
                 >
                   Production Line {lineIndex + 1}
                 </Typography>
-
-                <Grid
-                  container
-                  justifyContent="center"
-                  sx={{ marginBottom: "10px" }}
-                >
-                  <Button
-                    variant="contained"
-                    onClick={() => setIsDrawerOpen(true)}
-                    sx={{
-                      backgroundColor: "#4CAF50",
-                      color: "#fff",
-                      textTransform: "none",
-                      padding: "10px 20px",
-                      "&:hover": {
-                        backgroundColor: "#388E3C",
-                      },
-                    }}
-                  >
-                    Assign
-                  </Button>
-                </Grid>
 
                 <Grid container spacing={2} justifyContent="center">
                   {renderSeats(line, lineIndex)}
@@ -752,6 +798,16 @@ const SeatPlanner = () => {
                   value={taskDetails.teamId}
                   onChange={(e) =>
                     setTaskDetails({ ...taskDetails, teamId: e.target.value })
+                  }
+                  focused
+                />
+                <TextField
+                  label="SMV"
+                  fullWidth
+                  margin="normal"
+                  value={taskDetails.smv}
+                  onChange={(e) =>
+                    setTaskDetails({ ...taskDetails, smv: e.target.value })
                   }
                   focused
                 />
@@ -910,14 +966,7 @@ const SeatPlanner = () => {
   );
 };
 
-const buttonStyle = (color, backgroundColor) => ({
-  padding: "10px 15px",
-  border: `1px solid ${color}`,
-  color: color,
-  backgroundColor: backgroundColor,
-  borderRadius: "5px",
-  cursor: "pointer",
-});
+
 
 const inputStyle = {
   padding: "8px",
@@ -925,5 +974,4 @@ const inputStyle = {
   borderRadius: "4px",
   border: "1px solid #ccc",
 };
-
 export default SeatPlanner;

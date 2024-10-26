@@ -276,20 +276,6 @@ def delete_task():
     
     return jsonify({"message": "Task deleted successfully!"}), 200
 
-# @app.route('/update_task', methods=['POST'])
-# def update_task():
-#     task_id = request.json.get('taskId')  # Get task ID from request
-#     updated_end_date = request.json.get('endDate')  # Get the new end date
-#     global assigned_tasks
-
-#     # Find and update the task
-#     for task in assigned_tasks:
-#         if task['productId'] == task_id:  # Match by productId or any unique identifier
-#             task['endDate'] = updated_end_date  # Update only the end date
-#             return jsonify({"message": "Task updated successfully!"}), 200
-
-#     return jsonify({"error": "Task not found!"}), 404
-
 
 # Modified seat plan generation to exclude already assigned employees
 @app.route('/seat_plan', methods=['POST'])
