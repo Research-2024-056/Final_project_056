@@ -30,7 +30,7 @@ const SewingActivityModal = ({
   ];
 
   return (
-    <Modal open={open} onClose={onClose} onClick={onSubmit}>
+    <Modal open={open} onClose={onClose} >
       <Box
         sx={{
           width: { xs: "95%", sm: "80%", md: "60%", lg: "50%" },
@@ -103,7 +103,10 @@ const SewingActivityModal = ({
           <Button
             variant="contained"
             color="primary"
-            onClick={onSubmit}
+            onClick={() => {
+              onSubmit();
+              onClose(); // Close the modal after submit
+            }}
             sx={{
               width: { xs: "100%", sm: "auto" }, 
             }}
