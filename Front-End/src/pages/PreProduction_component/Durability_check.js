@@ -7,16 +7,16 @@ import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+
+
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
+
 import axios from 'axios';
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -48,6 +48,7 @@ function Durability_check() {
       }
     }, 2000);
     return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep, lastActiveStepTime]);
 
   const [endUseValues, setEndUseValues] = useState([]);
@@ -205,16 +206,17 @@ function Durability_check() {
       'End Use': endUse
     }));
 
-    // Send the data to the backend
-    axios.post('http://127.0.0.1:5001/predict', requestData3)
-      .then(response => {
-        setPrediction3(response.data.predictions[0]);
-        handleNext();
-      })
-      .catch(error => {
-        console.error('Error making prediction:', error);
-      });
-  };
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+axios.post('http://127.0.0.1:5001/predict', requestData3)
+  .then(response => {
+    setPrediction3(response.data.predictions[0]);
+    handleNext();
+  })
+  .catch(error => {
+    console.error('Error making prediction:', error);
+  });
+};
 
 
 
