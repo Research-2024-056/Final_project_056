@@ -37,7 +37,6 @@ function OrderDashboard() {
               EndUse: value.EndUse,
               FabricMethod: value.FabricMethod,
               FiberContent: value.FiberContent,
-              MachineNumber: value.MachineNumber,
               Started: value.Started,
             }));
             setOrderData(orders);
@@ -190,15 +189,6 @@ function OrderDashboard() {
                   fontWeight: "bold",
                 }}
               >
-                Machine Number
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
                 Fabric Method
               </TableCell>
               <TableCell
@@ -232,7 +222,6 @@ function OrderDashboard() {
                 <TableCell>{order.NeedleType}</TableCell>
                 <TableCell>{order.NumberOfUnits}</TableCell>
                 <TableCell>{order.EndUse}</TableCell>
-                <TableCell>{order.MachineNumber}</TableCell>
                 <TableCell>{order.FabricMethod}</TableCell>
                 <TableCell>
                   {order.Started === "true" ? (
