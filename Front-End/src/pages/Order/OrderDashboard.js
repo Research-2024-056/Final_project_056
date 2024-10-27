@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PageMain from "../../components/PageMain";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import { ref, push, onValue } from "firebase/database"; // Adjust the path as necessary
+import { ref, onValue } from "firebase/database"; // Adjust the path as necessary
 import { projectFirestore } from "../../components/firebase-config";
 import {
   Box,
@@ -38,6 +38,7 @@ function OrderDashboard() {
               FabricMethod: value.FabricMethod,
               FiberContent: value.FiberContent,
               MachineNumber: value.MachineNumber,
+              Started: value.Started,
             }));
             setOrderData(orders);
             console.log(orders);
@@ -200,6 +201,15 @@ function OrderDashboard() {
               >
                 Fabric Method
               </TableCell>
+              <TableCell
+                sx={{
+                  color: "white",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                }}
+              >
+                Order Status
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -224,6 +234,21 @@ function OrderDashboard() {
                 <TableCell>{order.EndUse}</TableCell>
                 <TableCell>{order.MachineNumber}</TableCell>
                 <TableCell>{order.FabricMethod}</TableCell>
+                <TableCell>
+                  {order.Started === "true" ? (
+                    <span style={{ color: "green", fontWeight: "bold" }}>
+                      In Progress
+                    </span>
+                  ) : order.Started === "false" ? (
+                    <span style={{ color: "blue", fontWeight: "bold" }}>
+                      Completed
+                    </span>
+                  ) : (
+                    <span style={{ color: "gray", fontWeight: "bold" }}>
+                      Not Started
+                    </span>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
