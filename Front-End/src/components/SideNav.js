@@ -38,7 +38,6 @@ function SideNav({ open, handleDrawerClose }) {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        backgroundColor: "#1c2434",
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
@@ -176,19 +175,22 @@ function SideNav({ open, handleDrawerClose }) {
             },
           }}
         >
-         <ListItemButton to='/SewingDashboard'>
-                        <ListItemIcon>
-                            <LeaderboardIcon sx={{ color: "#ffffff" }} />
-                        </ListItemIcon>
-                        <ListItemText primary="Machine Maintenance" sx={{
-                            color: "#ffffff",
-                            fontWeight: 400,
-                            textTransform: "uppercase",
-                            '& .css-10hburv-MuiTypography-root': {
-                                fontSize: "14px"
-                            }
-                        }} />
-                    </ListItemButton>
+          <ListItemButton to="/SewingDashboard">
+            <ListItemIcon>
+              <LeaderboardIcon sx={{ color: "#ffffff" }} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Machine Maintenance"
+              sx={{
+                color: "#ffffff",
+                fontWeight: 400,
+                textTransform: "uppercase",
+                "& .css-10hburv-MuiTypography-root": {
+                  fontSize: "14px",
+                },
+              }}
+            />
+          </ListItemButton>
         </ListItem>
 
         <ListItem
@@ -223,7 +225,8 @@ function SideNav({ open, handleDrawerClose }) {
       <List>
         <ListItem
           disablePadding
-          sx={{ marginTop: "85%",
+          sx={{
+            marginTop: "85%",
             "&:hover": {
               backgroundColor: "#333a48",
             },
