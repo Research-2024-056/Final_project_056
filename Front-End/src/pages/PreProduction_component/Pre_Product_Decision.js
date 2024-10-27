@@ -16,7 +16,7 @@ import Modal from '@mui/material/Modal';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import { LineChart } from '@mui/x-charts/LineChart';
 import jsPDF from 'jspdf';
 
@@ -37,7 +37,7 @@ const style = {
 
 
 function DicisionMake() {
-  const [showCards, setShowCards] = useState(false);
+
   const [endUse, setEndUse] = useState('');
   const [fabricsDurabilities, setFabricsDurabilities] = useState([]);
   const [fabricprice, setFabricprice] = useState([]);
@@ -109,11 +109,9 @@ function DicisionMake() {
   }, []);
   // Call the function
 
-  const handleSendRequest = () => {
-    setShowCards(true);
-  };
 
-  const [sortedBy, setSortedBy] = useState(null);
+
+
   const handleSortDurabilities = (order) => {
     const sortedFabrics = [...fabricsDurabilities].sort((a, b) => {
       if (order === 'asc') {
@@ -123,7 +121,7 @@ function DicisionMake() {
       }
     });
     setFabricsDurabilities(sortedFabrics);
-    setSortedBy(order);
+    
   };
 
 
@@ -183,7 +181,7 @@ function DicisionMake() {
 
   //line chart for threads
 
-  const uData = [26.36, 28.17, 29.73, 26.01, 26.88, 27.98, 27.94];
+
 
   const xLabels = [
     '2025',
@@ -195,7 +193,7 @@ function DicisionMake() {
 
   //line chart for Fabric
 
-  const fData = [26.36, 28.17, 29.73, 26.01, 26.88, 27.98, 27.94];
+
 
   const fLabels = [
     '2025',
@@ -297,9 +295,9 @@ function DicisionMake() {
     const doc = new jsPDF();
   
     const margin = 16; // Updated margin
-    const startX = margin;
+ 
     const startY = 30;
-    const lineHeight = 7;
+
     const contentWidth = doc.internal.pageSize.getWidth() - 2 * margin;
     const borderColor = [227, 232, 238]; // RGB for #E3E8EE
     const borderRadius = 2; // Border radius

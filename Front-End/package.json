@@ -45,7 +45,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-dupe-keys": "off"
+    }
   },
   "browserslist": {
     "production": [
