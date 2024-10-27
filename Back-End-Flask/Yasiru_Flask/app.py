@@ -22,7 +22,7 @@ with open('data/xgb.pickle', 'rb') as f:
     xgbr = pickle.load(f)
 
 # MongoDB configuration
-client = MongoClient("mongodb+srv://sajindu:saji1234@cluster0.bx77a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")  # Replace with your MongoDB URI
+client = MongoClient("mongodb+srv://jmyasiru:yasi23292T@cluster0.hcsf2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")  # Replace with your MongoDB URI
 db = client["Garment"]  # Replace with your database name
 collection = db["Inventory"]  # Replace with your collection name
 
@@ -73,6 +73,19 @@ def predict(Inventory):
     
     return jsonify(merged_res)
 
+@app.route('/predictupdate/<Inventory>', methods=['POST'])
+def predictandupdate(Inventory):
+    content = request.json
+    res = inference(content)
+     # Merge input data with prediction results
+    merged_res = {**content, **res}
+
+    # Remove usageDict from the response
+    if 'usageDict' in merged_res:
+        del merged_res['usageDict']
+    print(merged_res)
+    return jsonify(merged_res)
+
 
 @app.route('/collection/<Inventory>', methods=['POST'])
 def create_document(Inventory):
@@ -93,6 +106,41 @@ def get_non_empty_serials(Inventory):
         data.append(result)
     return jsonify(data)
 
+@app.route('/collection/<Inventory>/update', methods=['POST'])
+def update_document(Inventory):
+    collection = db[Inventory]
+
+    # Get the values passed from the frontend in the request body
+    data = request.json  # assuming JSON data is sent in the request
+    serial_no = data.get('serial_no')  # serial_no for identifying the document
+    column_name = data.get('column_name')  # column to be updated
+    column_value = data.get('column_value')  # new value for the column
+
+    print(serial_no,column_name,column_value)
+
+    if not serial_no or not column_name or column_value is None:
+        return jsonify({"error": "serial_no, column_name, and column_value are required"}), 400
+
+    # Query to find the document to update using the serial_no
+    result = collection.find_one({"Serial_No": serial_no})
+
+    if result:
+        # Update the specified column with the new value
+        update_result = collection.update_one(
+            {"Serial_No": serial_no},  # Filter to find the document
+            {"$set": {column_name: column_value}}  # Update operation
+        )
+
+        if update_result.modified_count > 0:
+            # Fetch the updated document to return it in the response
+            updated_document = collection.find_one({"Serial_No": serial_no})
+            updated_document["_id"] = str(updated_document["_id"])  # Convert ObjectId to string
+            return jsonify(updated_document)
+        else:
+            return jsonify({"error": "Document was not updated. Please check your data."}), 400
+    else:
+        return jsonify({"error": "No matching document found"}), 404
+
 @app.route('/collection/<Inventory>/maintenance-check', methods=['GET'])
 def maintenance_check(Inventory):
     collection = db[Inventory]
@@ -107,7 +155,7 @@ def maintenance_check(Inventory):
     # Filtered results
     filtered_data = []
     for result in results:
-        if any(result.get(col, 101) < 100 for col in output_columns):
+        if any(result.get(col, 101) < 24 for col in output_columns):
             result["_id"] = str(result["_id"])  # Convert ObjectId to string
             filtered_data.append(result)
     return jsonify(filtered_data)
@@ -140,7 +188,6 @@ def all_machine(inventory):
         }
         data.append(formatted_result)
     
-    print(data)  # Check the final flattened data
     return jsonify(data)
 
 # @app.route('/thingspeak/data', methods=['GET'])
@@ -225,28 +272,29 @@ def get_thingspeak_data():
             'api_key': 'S569XKBNZQF2J873',  # API key
             'results': 1  # Number of results to retrieve
         }
-
+        print("done")
         # Make a GET request to the API
         response = requests.get(url, params=params)
-
+        print(response)
         # Check if the request was successful
         if response.status_code == 200:
             data = response.json()  # Convert the response to JSON format
-            
+            print(data)
             # Extract the latest timestamp and field1 value from the ThingSpeak data
             latest_feed = data['feeds'][0]
             latest_time = datetime.strptime(latest_feed['created_at'], '%Y-%m-%dT%H:%M:%SZ')
             field1_value = float(latest_feed['field1'])
-
+            print(latest_time)
             # Determine the current time and calculate time difference
             now = datetime.utcnow()
             time_difference = now - latest_time
-
+            print(time_difference)
             # Determine status based on the time difference and field1 value
             if time_difference <= timedelta(minutes=1) and field1_value > 220:
                 status = "On"
                 # Find the corresponding item in MongoDB based on the Serial_No
                 serial_no = data['channel']['name']
+                print(serial_no) 
                 collection = db['Inventory']  # Replace with your collection name
                 mongodb_result = collection.find_one({"Serial_No": serial_no})
 
@@ -282,8 +330,18 @@ def get_thingspeak_data():
             else:
                 # Handle the case where status is "Off"
                 status = "Off"
+                serial_no = data['channel']['name']
+                print(serial_no) 
+                collection = db['Inventory']  # Replace with your collection name
+                mongodb_result = collection.find_one({"Serial_No": serial_no})
+                 # Update the status field and the reduced values in MongoDB
+                collection.update_one(
+                        {"Serial_No": serial_no},
+                        {"$set": {"status": status}}
+                    )
                 # Return a response indicating that the status is off
                 return jsonify({"status": status, "message": "No recent data or value below threshold"}), 200
+            
 
         else:
             return jsonify({"error": "Failed to fetch data from ThingSpeak API"}), response.status_code
@@ -291,5 +349,23 @@ def get_thingspeak_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route('/collection/<Inventory>/delete', methods=['POST'])
+def delete_serial_no(Inventory):
+    #serial_no = request.args.get('serial_no')  # Get serial_no from query parameters
+    data = request.json  # assuming JSON data is sent in the request
+    serial_no = data.get('serial_no')  # serial_no for identifying the document
+    print(serial_no)
+    if not serial_no:
+        return jsonify({"error": "serial_no parameter is required"}), 400
+ 
+    collection = db[Inventory]
+    result = collection.delete_many({"Serial_No": serial_no})
+    print(result,serial_no)
+ 
+    if result.deleted_count > 0:
+        return jsonify({"message": f"Deleted {result.deleted_count} document(s) with serial_no: {serial_no}"}), 200
+    else:
+        return jsonify({"message": "No documents found with the specified serial_no"}), 404
+    
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5005, debug=True)

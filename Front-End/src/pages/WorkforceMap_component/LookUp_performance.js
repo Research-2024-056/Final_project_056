@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PageMain from "../../components/PageMain";
-import {
-  Button,
-  Box,
-  Grid,
-  Typography,
-  Paper,
-  Modal,
-  Switch,
-} from "@mui/material";
-import TextField from "@material-ui/core/TextField";
-
+import { Button, Box, Typography, Paper, Switch } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import AddEmployeeModal from "../../components/WorkforceMap/AddEmployeeModal";
 import PerformanceTable from "../../components/WorkforceMap/PerformanceTable";
 import SewingActivityModal from "../../components/WorkforceMap/SewingActivityModal";
@@ -25,7 +16,7 @@ const LookUpPerformance = () => {
   const [orderBy, setOrderBy] = useState("");
   const [order, setOrder] = useState("asc");
   const [openPopupSwingActivity, setopenPopupSwingActivity] = useState(false);
-  //const [selectedActivitiesByRow, setSelectedActivitiesByRow] = useState({}); // Store selected activities for each row
+  const [assignedActivities, setAssignedActivities] = useState({});
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -121,40 +112,31 @@ const LookUpPerformance = () => {
 
   const handleOpenPopupSwingActivity = (row) => {
     setSelectedRow(row);
+    setSelectedActivities(assignedActivities[row.Emp_No] || []);
     setopenPopupSwingActivity(true);
   };
 
-  const handleClosePopupSwingActivity = () => {
-    setopenPopupSwingActivity(false);
-    setSelectedRow(null);
-  };
+  // useEffect(() => {
+  //   const savedActivities = localStorage.getItem("assignedActivities");
+  //   console.log("Loaded activities from local storage:", savedActivities);
+  //   if (savedActivities) {
+  //     try {
+  //       setAssignedActivities(JSON.parse(savedActivities));
+  //     } catch (error) {
+  //       console.error("Error parsing saved activities:", error);
+  //     }
+  //   }
+  // }, []);
 
-    // Function to handle checkbox change for the current row
-    // const handleCheckboxChange = (activity) => {
-    //   const currentRowId = selectedRow.id; // Assuming each row has a unique ID
-  
-    //   setSelectedActivitiesByRow((prev) => {
-    //     const activitiesForRow = prev[currentRowId] || [];
-    //     if (activitiesForRow.includes(activity)) {
-    //       // Remove the activity if it's already selected
-    //       return {
-    //         ...prev,
-    //         [currentRowId]: activitiesForRow.filter((item) => item !== activity),
-    //       };
-    //     } else {
-    //       // Add the new activity
-    //       return {
-    //         ...prev,
-    //         [currentRowId]: [...activitiesForRow, activity],
-    //       };
-    //     }
-    //   });
-    // };
-  
-    // // Function to handle submitting activities for the current row
-    // const handleSubmit = () => {
-    //   handleClosePopupSwingActivity();
-    // };
+  // useEffect(() => {
+  //   console.log("Saving activities to local storage:", assignedActivities);
+  //   localStorage.setItem("assignedActivities", JSON.stringify(assignedActivities));
+  // }, [assignedActivities]);
+
+  const handleActivitiesSubmit = (laborerId, activities) => {
+    setAssignedActivities((prev) => ({ ...prev, [laborerId]: activities }));
+    setopenPopupSwingActivity(false);
+  };
 
   const handleOpenAddEmployeePopup = () => {
     setOpenAddEmployeePopup(true);
@@ -316,22 +298,24 @@ const LookUpPerformance = () => {
             onSort={handleSort}
             onOpenPopup={handleOpenPopup}
             onOpenPopupSwingActivity={handleOpenPopupSwingActivity}
+            assignedActivities={assignedActivities}
             toggleDisplay={toggleDisplay}
           />
         </Paper>
         <SewingActivityModal
           open={openPopupSwingActivity}
-          onClose={handleClosePopupSwingActivity}
+          onClose={() => setopenPopupSwingActivity(false)}
           selectedActivities={selectedActivities}
           onCheckboxChange={(activity) => {
-            if (selectedActivities.includes(activity)) {
-              setSelectedActivities(
-                selectedActivities.filter((item) => item !== activity)
-              );
-            } else {
-              setSelectedActivities([...selectedActivities, activity]);
-            }
+            setSelectedActivities((prev) =>
+              prev.includes(activity)
+                ? prev.filter((a) => a !== activity)
+                : [...prev, activity]
+            );
           }}
+          onSubmit={() =>
+            handleActivitiesSubmit(selectedRow.Emp_No, selectedActivities)
+          }
         />
         <PerformancePredictionModal
           open={openPopup}

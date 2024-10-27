@@ -34,7 +34,6 @@ export default function Labor_efficiency_analysis() {
   const [errors, setErrors] = useState({});
   const [laborEfficiency, setLaborEfficiency] = useState(null);
   const [efficiencyGrade, setEfficiencyGrade] = useState("");
-  const [remaining, setRemaining] = useState(null);
   const [expanded, setExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -99,13 +98,13 @@ export default function Labor_efficiency_analysis() {
         const efficiency = ((goodQualityPieces * smv) / workingMinutes) * 100;
         setLaborEfficiency(efficiency.toFixed(2));
 
-        if (efficiency >= 91) {
+        if (efficiency >= 0.91) {
           setEfficiencyGrade("A (Highly Efficient)");
-        } else if (efficiency >= 81) {
+        } else if (efficiency >= 0.81) {
           setEfficiencyGrade("B (Very Efficient)");
-        } else if (efficiency >= 71) {
+        } else if (efficiency >= 0.71) {
           setEfficiencyGrade("C (Moderately Efficient)");
-        } else if (efficiency >= 61) {
+        } else if (efficiency >= 0.61) {
           setEfficiencyGrade("D (Low Efficiency)");
         } else {
           setEfficiencyGrade("E (Poor Efficiency)");
@@ -133,7 +132,6 @@ export default function Labor_efficiency_analysis() {
         newEvolutionData
       );
       alert("Data inserted successfully!");
-      setRemaining(response.data.remaining);
     } catch (error) {
       console.error("Error inserting data:", error);
     }
@@ -459,7 +457,7 @@ export default function Labor_efficiency_analysis() {
                     mb: 2,
                   }}
                 >
-                  Labor Efficiency: {laborEfficiency}%
+                  Labor Efficiency: {laborEfficiency}
                 </Typography>
 
                 <Typography
@@ -473,7 +471,7 @@ export default function Labor_efficiency_analysis() {
                   Efficiency Grade: {efficiencyGrade}
                 </Typography>
 
-                {remaining !== null && (
+                {/* {remaining !== null && (
                   <Typography
                     variant="subtitle2"
                     sx={{
@@ -484,7 +482,7 @@ export default function Labor_efficiency_analysis() {
                   >
                     Remaining Employees: {remaining}
                   </Typography>
-                )}
+                )} */}
 
                 <Button
                   type="button"
