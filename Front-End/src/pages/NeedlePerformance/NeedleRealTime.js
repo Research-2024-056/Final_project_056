@@ -29,7 +29,7 @@ import {
 } from "recharts";
 
 function NeedleRealTime() {
-  const { machineId, ordernumber } = useParams();
+  const {ordernumber } = useParams();
   const [orderData, setOrderData] = useState([]);
   const [averageValue, setAverageValue] = useState(0);
   const [needleCountHistory, setNeedleCountHistory] = useState([]);
