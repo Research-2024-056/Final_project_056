@@ -33,12 +33,11 @@ function NeedleRealTime() {
   const [orderData, setOrderData] = useState([]);
   const [averageValue, setAverageValue] = useState(0);
   const [needleCountHistory, setNeedleCountHistory] = useState([]);
+  const [needleSpeedHistory, setNeedleSpeedHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // New fields to simulate additional machine stats
-  const [machineSpeed, setMachineSpeed] = useState(0);
   const [efficiency, setEfficiency] = useState(0);
   const [garmentsProduced, setGarmentsProduced] = useState(0);
 
@@ -73,6 +72,17 @@ function NeedleRealTime() {
 
             setNeedleCountHistory(needleGraphData);
 
+            const needleSpeedGraphData = orders.flatMap((order) =>
+              order.SpeedGraph
+                ? Object.entries(order.SpeedGraph).map(([key, value]) => ({
+                    time: new Date(value.timestamp).toLocaleTimeString(),
+                    needleSpeed: value.value,
+                  }))
+                : []
+            );
+
+            setNeedleSpeedHistory(needleSpeedGraphData);
+
             const needleType = orders[0].NeedleType;
             let averageValue;
             switch (needleType) {
@@ -92,11 +102,8 @@ function NeedleRealTime() {
                 averageValue = 400; // Default value if none match
                 break;
             }
-
             setAverageValue(averageValue);
 
-            // Simulate additional data for stats
-            setMachineSpeed(Math.floor(Math.random() * 800 + 200)); // Random speed between 200-1000 RPM
             setEfficiency(Math.floor(Math.random() * 100)); // Random efficiency percentage
             setGarmentsProduced(Math.floor(Math.random() * 1000)); // Random garments count
 
@@ -155,109 +162,337 @@ function NeedleRealTime() {
     );
 
   const needleCount = orderData.length > 0 ? orderData[0].NeedleCount : 0;
+  const averageSpeed = orderData.length > 0 ? orderData[0].averageSpeed : 0;
+  const maxSpeed = orderData.length > 0 ? orderData[0].maxSpeed : 0;
+  const totalActiveTime =
+    orderData.length > 0 ? orderData[0].totalActiveTime : 0;
+  const averageGapDuration =
+    orderData.length > 0 ? orderData[0].averageGapDuration : 0;
+  const needleSpeed = orderData.length > 0 ? orderData[0].Speed : 0;
+
   const warningMessage = getWarningMessage(needleCount);
 
   return (
     <PageMain>
       <Typography
         variant="h4"
-        sx={{
-          fontWeight: "bold",
-          mb: 2,
-          textAlign: "center",
-          margin: "4%",
-        }}
+        sx={{ fontWeight: 600, fontFamily: "Poppins", marginBottom: "3%" }}
       >
         Needle Performance Dashboard
       </Typography>
-      <Box sx={{ px: 2 }}>
-        <Card sx={{ mb: 2, p: 2 }}>
-          <CardContent>
-            <Grid container spacing={2}>
-              {/* Display Needle Stats */}
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Needle Type</Typography>
-                <Typography>{orderData[0]?.NeedleType || "N/A"}</Typography>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Average Needle Value</Typography>
-                <Typography>{averageValue}</Typography>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Current Needle Count</Typography>
+      <Box sx={{ px: 2, minHeight: "100vh", color: "#fff" }}>
+        <Grid container spacing={2}>
+          {/* Needle Type */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                backgroundColor: "#4A628A",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Needle Type
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {orderData[0]?.NeedleType || "N/A"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Average Needle Value */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#7AB2D3",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Average Needle Value
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {averageValue}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Current Needle Count */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#B9E5E8",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Current Needle Count
+                </Typography>
                 <Typography
+                  variant="h3"
                   sx={{
-                    color: needleCount >= averageValue - 1000 ? "red" : "black",
+                    fontWeight: "bold",
+                    color: needleCount >= averageValue - 1000 ? "red" : "#fff",
                   }}
                 >
                   {needleCount}
                 </Typography>
-              </Grid>
-              {/* New Machine Stats */}
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Machine Speed (RPM)</Typography>
-                <Typography>{machineSpeed}</Typography>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Efficiency (%)</Typography>
-                <Typography>{efficiency}</Typography>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Typography variant="h6">Garments Produced</Typography>
-                <Typography>{garmentsProduced}</Typography>
-              </Grid>
-            </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
 
-            {warningMessage && (
-              <Typography sx={{ color: "red", mt: 2, textAlign: "center" }}>
-                {warningMessage}
-              </Typography>
-            )}
-
-            {/* Needle Count Chart */}
-            <Box sx={{ mt: 4 }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={needleCountHistory}>
-                  <XAxis
-                    dataKey="time"
-                    label={{
-                      value: "Time",
-                      position: "insideBottom",
-                      offset: -5,
-                    }}
-                  />
-                  <YAxis
-                    domain={[0, averageValue + 100]}
-                    label={{
-                      value: "Number of Movements",
-                      angle: -90,
-                      position: "insideLeft",
-                    }}
-                  />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="needleCount"
-                    stroke="#8884d8"
-                  />
-                  <ReferenceLine
-                    y={averageValue}
-                    label="Average"
-                    stroke="red"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-
-            <Button
-              onClick={handleEnd}
-              variant="contained"
-              sx={{ mt: 3, width: "100%" }}
+          {/* Machine Speed */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#CBDCEB",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
             >
-              End Order
-            </Button>
-          </CardContent>
-        </Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Machine Speed (RPM)
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {needleSpeed}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Efficiency */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#608BC1",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Efficiency (%)
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {efficiency}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Garments Produced */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#ADD8E6",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Garments Produced
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {garmentsProduced}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Average speed */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#133E87",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                Average Speed
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {averageSpeed}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* max Speed */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#007fff",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                Max Speed
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {maxSpeed}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Total Active time */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#0067A5",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                Total ActiveTime
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {totalActiveTime}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#01377D",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                Average Gap Duration
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {averageGapDuration}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Warning Message */}
+        {warningMessage && (
+          <Typography sx={{ color: "red", mt: 2, textAlign: "center" }}>
+            {warningMessage}
+          </Typography>
+        )}
+
+        {/* Needle Movement Chart */}
+        <Box
+          sx={{ mt: 4, backgroundColor: "#FEF9F2", borderRadius: "8px", p: 3 }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+              mb: 2,
+              color: "black",
+            }}
+          >
+            Live Needle Health
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={needleCountHistory.slice(-50)}>
+              <XAxis
+                dataKey="time"
+                label={{
+                  value: "Time",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
+              />
+              <YAxis
+                domain={[0, averageValue + 100]}
+                label={{
+                  value: "Number of Movements",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="needleCount" stroke="#8884d8" />
+              <ReferenceLine y={averageValue} label="Average" stroke="red" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Box>
+
+        {/* Machine Speed Chart */}
+        <Box
+          sx={{ mt: 4, backgroundColor: "#FEF9F2", borderRadius: "8px", p: 3 }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+              mb: 2,
+              color: "black",
+            }}
+          >
+            Machine Speed
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={needleSpeedHistory.slice(-50)}>
+              <XAxis
+                dataKey="time"
+                label={{
+                  value: "Time",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
+              />
+              <YAxis
+                domain={[0, 100]}
+                label={{
+                  value: "Speed",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="needleCount" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Box>
+
+        {/* End Order Button */}
+        <Button
+          onClick={handleEnd}
+          variant="contained"
+          sx={{
+            mt: 3,
+            width: "100%",
+            backgroundColor: "#133E87",
+            color: "white",
+          }}
+        >
+          End Order
+        </Button>
       </Box>
     </PageMain>
   );

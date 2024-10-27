@@ -23,6 +23,7 @@ function OrderDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [orderNumber, setOrderNumber] = useState("");
 
   useEffect(() => {
     const fetchData = () => {
@@ -39,6 +40,7 @@ function OrderDetails() {
           if (data) {
             const order = Object.values(data)[0]; // Assuming only one order matches
             setOrderData(order);
+            setOrderNumber(order.OrderNumber);
           }
           setLoading(false);
         },
@@ -51,6 +53,7 @@ function OrderDetails() {
 
     fetchData();
   }, []);
+
   if (loading) {
     return (
       <PageMain>
@@ -78,44 +81,8 @@ function OrderDetails() {
     );
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    const orderRef = ref(projectFirestore, `/Orders`);
-    const queryRef = query(
-      orderRef,
-      orderByChild("OrderNumber"),
-      equalTo(ordernumber)
-    );
-
-    try {
-      // Listen to the query to get the specific order key
-      onValue(queryRef, async (snapshot) => {
-        if (snapshot.exists()) {
-          // Get the key of the first matching order
-          const orderKey = Object.keys(snapshot.val())[0];
-          const specificOrderRef = ref(projectFirestore, `/Orders/${orderKey}`);
-
-          // Update the order's "Started" field
-          await set(specificOrderRef, {
-            ...snapshot.val()[orderKey], // Keep the existing fields
-            Started: "true", // Update or add the "Started" field
-          });
-
-          alert("Order Started Successfully!");
-
-          // Navigate to the real-time dashboard after starting the order
-          navigate(
-            `/realTimeDashboard/${snapshot.val()[orderKey].MachineNumber}/${
-              snapshot.val()[orderKey].OrderNumber
-            }`
-          );
-        } else {
-          alert("Order not found!");
-        }
-      });
-    } catch (error) {
-      console.error("Error Starting Order:", error.message);
-    }
+  const handleButtonClick = (ordernumberNavigate) => {
+    navigate("/Createworkload", { state: ordernumberNavigate }); // Navigate to Services page
   };
 
   return (
@@ -132,7 +99,7 @@ function OrderDetails() {
       >
         Order Page
       </Typography>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleButtonClick}>
         <Box
           sx={{
             marginTop: "20px",
@@ -154,7 +121,7 @@ function OrderDetails() {
           >
             Order Number
           </Typography>
-          <TextField value={orderData.OrderNumber} sx={{ width: "70%" }} />
+          <TextField value={orderData.OrderNumber} disabled sx={{ width: "70%" }} />
         </Box>
         <Box
           sx={{
@@ -176,7 +143,7 @@ function OrderDetails() {
           >
             Start Date
           </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.StartDate} />
+          <TextField sx={{ width: "70%" }} disabled value={orderData.StartDate} />
         </Box>
         <Box
           sx={{
@@ -198,7 +165,7 @@ function OrderDetails() {
           >
             End Date
           </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.EndDate} />
+          <TextField sx={{ width: "70%" }} disabled value={orderData.EndDate} />
         </Box>
 
         <Box
@@ -221,30 +188,7 @@ function OrderDetails() {
           >
             Number of Units
           </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.NumberOfUnits} />
-        </Box>
-
-        <Box
-          sx={{
-            marginBottom: "20px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            sx={{
-              lineHeight: 1,
-              fontSize: "1.5rem",
-              fontFamily: "poppins",
-              color: "darkblue",
-              marginLeft: "5%",
-            }}
-          >
-            Machine Number
-          </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.MachineNumber} />
+          <TextField sx={{ width: "70%" }} disabled value={orderData.NumberOfUnits} />
         </Box>
 
         <Box
@@ -267,7 +211,7 @@ function OrderDetails() {
           >
             End Use
           </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.EndUse} />
+          <TextField sx={{ width: "70%" }} disabled value={orderData.EndUse} />
         </Box>
 
         <Box
@@ -290,7 +234,7 @@ function OrderDetails() {
           >
             Fabric Method
           </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.FabricMethod} />
+          <TextField sx={{ width: "70%" }} disabled value={orderData.FabricMethod} />
         </Box>
 
         {/* Render fiber content fields based on the selected fabric method */}
@@ -317,55 +261,20 @@ function OrderDetails() {
               >
                 Fiber Content
               </Typography>
-              <TextField sx={{ width: "70%" }} value={orderData.FiberContent} />
+              <TextField sx={{ width: "70%" }} disabled value={orderData.FiberContent} />
             </Box>
           ))}
-        <Box
-          sx={{
-            marginBottom: "20px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            sx={{
-              lineHeight: 1,
-              fontSize: "1.5rem",
-              fontFamily: "poppins",
-              color: "darkblue",
-              marginLeft: "5%",
-            }}
-          >
-            Needle Type
-          </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.NeedleType} />
-        </Box>
-        <Box
-          sx={{
-            marginBottom: "20px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            sx={{
-              lineHeight: 1,
-              fontSize: "1.5rem",
-              fontFamily: "poppins",
-              color: "darkblue",
-              marginLeft: "5%",
-            }}
-          >
-            Progress
-          </Typography>
-          <TextField sx={{ width: "70%" }} value={orderData.Started} />
-        </Box>
 
         <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleButtonClick(orderNumber)}
+          sx={{ width: "30%", marginLeft: "40%" }}
+        >
+          Create Machine Work Load
+        </Button>
+
+        {/* <Button
           variant="contained"
           color="primary"
           onClick={(event) => {
@@ -384,7 +293,7 @@ function OrderDetails() {
             : orderData?.Started === "false"
             ? "Order Completed" // Label for completed order
             : "Start Order"}{" "}
-        </Button>
+        </Button> */}
       </form>
     </PageMain>
   );

@@ -12,6 +12,7 @@ import OrderDashboard from "./pages/Order/OrderDashboard";
 import NewOrder from "./pages/Order/NewOrder";
 import OrderDetails from "./pages/Order/OrderDetails";
 import NeedleRealTime from "./pages/NeedlePerformance/NeedleRealTime";
+import WorkLoad from "./pages/Order/WorkLoad";
 
 // Workforce Map
 import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDashboard";
@@ -95,6 +96,7 @@ function App() {
           path="/SewingDashboard"
           element={<SewingDashboard></SewingDashboard>}
         />
+        <Route exact path="/Createworkload" element={<WorkLoad></WorkLoad>} />
       </Routes>
     </BRouter>
   );
