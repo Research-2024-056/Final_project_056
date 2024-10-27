@@ -38,11 +38,13 @@ function SideNav({ open, handleDrawerClose }) {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
+        backgroundColor: "#1c2434",
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           boxSizing: "border-box",
+          backgroundColor: "#1c2434",
         },
-        "& .css-12i7wg6-MuiPaper-root-MuiDrawer-paper": {
+        "& .css-153gm7s-MuiPaper-root-MuiDrawer-paper": {
           backgroundColor: "#1c2434",
         },
       }}
@@ -174,19 +176,22 @@ function SideNav({ open, handleDrawerClose }) {
             },
           }}
         >
-         <ListItemButton to='/SewingDashboard'>
-                        <ListItemIcon>
-                            <LeaderboardIcon sx={{ color: "#ffffff" }} />
-                        </ListItemIcon>
-                        <ListItemText primary="Machine Performance" sx={{
-                            color: "#ffffff",
-                            fontWeight: 400,
-                            textTransform: "uppercase",
-                            '& .css-10hburv-MuiTypography-root': {
-                                fontSize: "14px"
-                            }
-                        }} />
-                    </ListItemButton>
+          <ListItemButton to="/SewingDashboard">
+            <ListItemIcon>
+              <LeaderboardIcon sx={{ color: "#ffffff" }} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Machine Performance"
+              sx={{
+                color: "#ffffff",
+                fontWeight: 400,
+                textTransform: "uppercase",
+                "& .css-10hburv-MuiTypography-root": {
+                  fontSize: "14px",
+                },
+              }}
+            />
+          </ListItemButton>
         </ListItem>
 
         <ListItem

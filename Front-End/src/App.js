@@ -11,6 +11,7 @@ import NeedleDashboard from "./pages/NeedlePerformance/NeedleDashboard";
 import OrderDashboard from "./pages/Order/OrderDashboard";
 import NewOrder from "./pages/Order/NewOrder";
 import OrderDetails from "./pages/Order/OrderDetails";
+import NeedleRealTime from "./pages/NeedlePerformance/NeedleRealTime";
 
 // Workforce Map
 import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDashboard";
@@ -65,7 +66,6 @@ function App() {
           element={<Labor_efficiency_analysis></Labor_efficiency_analysis>}
         />
 
-        
         <Route
           exact
           path="/machineselect"
@@ -77,8 +77,13 @@ function App() {
           element={<NeedleDashboard></NeedleDashboard>}
         />
         <Route path="/OrderDetails/:ordernumber" element={<OrderDetails />} />
+        <Route
+          path="/realTimeDashboard/:machineId/:ordernumber"
+          element={<NeedleRealTime />}
+        />
+
         <Route path="/order" element={<OrderDashboard></OrderDashboard>} />
-       
+
         {/*Predictive Maintenance */}
         <Route
           exact
