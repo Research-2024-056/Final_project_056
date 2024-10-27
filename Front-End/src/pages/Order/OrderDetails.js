@@ -10,7 +10,6 @@ import {
 import PageMain from "../../components/PageMain";
 import {
   ref,
-  push,
   onValue,
   query,
   orderByChild,
@@ -80,13 +79,14 @@ function OrderDetails() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     const orderRef = ref(projectFirestore, `/Orders`);
     const queryRef = query(
       orderRef,
       orderByChild("OrderNumber"),
       equalTo(ordernumber)
     );
+
     try {
       // Listen to the query to get the specific order key
       onValue(queryRef, async (snapshot) => {
@@ -102,16 +102,22 @@ function OrderDetails() {
           });
 
           alert("Order Started Successfully!");
-          navigate(`/grafanadashboard/${ordernumber}`); // Set the success message
+
+          // Navigate to the real-time dashboard after starting the order
+          navigate(
+            `/realTimeDashboard/${snapshot.val()[orderKey].MachineNumber}/${
+              snapshot.val()[orderKey].OrderNumber
+            }`
+          );
         } else {
           alert("Order not found!");
         }
       });
     } catch (error) {
-      // Handle the error (you can show an error message to the user)
       console.error("Error Starting Order:", error.message);
     }
   };
+
   return (
     <PageMain>
       {console.log("order data new", orderData)}
@@ -336,14 +342,48 @@ function OrderDetails() {
           </Typography>
           <TextField sx={{ width: "70%" }} value={orderData.NeedleType} />
         </Box>
+        <Box
+          sx={{
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              lineHeight: 1,
+              fontSize: "1.5rem",
+              fontFamily: "poppins",
+              color: "darkblue",
+              marginLeft: "5%",
+            }}
+          >
+            Progress
+          </Typography>
+          <TextField sx={{ width: "70%" }} value={orderData.Started} />
+        </Box>
 
         <Button
-          type="submit"
           variant="contained"
           color="primary"
+          onClick={(event) => {
+            if (orderData?.Started === "true") {
+              window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
+            } else if (orderData?.Started === "false") {
+              window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
+            } else {
+              handleSubmit(event); // Pass event to handleSubmit when order is not started
+            }
+          }}
           sx={{ width: "30%", marginLeft: "40%" }}
         >
-          Start Order
+          {orderData?.Started === "true"
+            ? "Go To Order" // Label for active order
+            : orderData?.Started === "false"
+            ? "Order Completed" // Label for completed order
+            : "Start Order"}{" "}
         </Button>
       </form>
     </PageMain>
