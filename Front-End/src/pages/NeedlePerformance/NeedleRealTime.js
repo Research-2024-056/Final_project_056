@@ -27,7 +27,6 @@ import {
   ReferenceLine,
   ResponsiveContainer,
 } from "recharts";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 function NeedleRealTime() {
   const { machineId, ordernumber } = useParams();
