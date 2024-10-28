@@ -3,7 +3,7 @@ import { Box, Button, TextField, MenuItem, Typography } from "@mui/material";
 import PageMain from "../../components/PageMain";
 import { ref, push } from "firebase/database"; // Adjust the path as necessary
 import { projectFirestore } from "../../components/firebase-config";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const enduseOptions = [
   { value: "Metallic Print T-shirt", label: "Metallic Print T-shirt" },
@@ -413,13 +413,13 @@ const fabricOptions = [
 
 function NewOrder() {
   const [orderNumber, setOrderNumber] = useState("");
-  
+  const navigate = useNavigate();
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [endUse, setEndUse] = useState("");
   const [fabricMethod, setFabricMethod] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  
+
   const [fiberContent, setFiberContent] = useState([""]);
   const OrderRef = ref(projectFirestore, "/Orders");
 
@@ -457,6 +457,7 @@ function NewOrder() {
       });
 
       alert("New Order Created Successfully!", newOrderRef); // Set the success message
+      navigate(`/order`);
     } catch (error) {
       // Handle the error (you can show an error message to the user)
       console.error("Error Creating new Order:", error.message);
@@ -598,7 +599,6 @@ function NewOrder() {
               </TextField>
             </Box>
           ))}
-        
 
         <Button type="submit" variant="contained" color="primary">
           Create Order
