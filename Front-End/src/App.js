@@ -100,7 +100,7 @@ function App() {
         <Route exact path="/Createworkload" element={<WorkLoad></WorkLoad>} />
         <Route
           exact
-          path="/workload/:ordernumber"
+          path="/workload/:ordernumber/:documentid"
           element={<WorkloadOverview></WorkloadOverview>}
         />
       </Routes>
