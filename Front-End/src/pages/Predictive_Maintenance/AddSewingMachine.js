@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Grid, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import PageMain from "../../components/PageMain";
 import { useNavigate } from "react-router-dom";
 
-
-
 export default function AddSewingMachine({ children }) {
-
   const [Brand, setBrands] = useState("");
   const [Type, setType] = useState("");
   const [Fabric_Type, setFabric_Type] = useState("");
@@ -24,26 +21,63 @@ export default function AddSewingMachine({ children }) {
   const [Oil_Filling, setOil_Filling] = useState("");
   const [Dust_Remove, setDust_Remove] = useState("");
   const [Serial_No, setSerialNo] = useState("");
-  const [status, setStatus] = useState("Off");
+  const [status] = useState("Off");
   const navigate = useNavigate();
 
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // 'success' | 'error' | 'warning' | 'info'
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const submitForm = () => {
+    // Validation for Fabric_Type
+    const fabricTypeLower = Fabric_Type.trim().toLowerCase();
     if (
-      Brand != "" &&
-      Type != "" &&
-      Fabric_Type != "" &&
-      M_Year != "" &&
-      Take_up_Spring != "" &&
-      Take_up_Rubber != "" &&
-      Bobbin_Case != "" &&
-      Feed_Dog != "" &&
-      Presser_Foot != "" &&
-      Tension_Assembly != "" &&
-      Hook_Assembly != "" &&
-      Timing_Components != "" &&
-      Oil_Filling != "" &&
-      Dust_Remove != "" &&
-      Serial_No != ""
+      fabricTypeLower !== "heavy" &&
+      fabricTypeLower !== "medium"
+    ) {
+      setSnackbar({
+        open: true,
+        message: "Fabric Type must be either 'Heavy' or 'Medium'.",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Validation for Manufacture Year
+    const year = parseInt(M_Year, 10);
+    if (isNaN(year) || year < 2006 || year > 2020) {
+      setSnackbar({
+        open: true,
+        message: "Manufacture Year must be a number between 2006 and 2020.",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Check all fields are filled
+    if (
+      Brand !== "" &&
+      Type !== "" &&
+      Fabric_Type !== "" &&
+      M_Year !== "" &&
+      Take_up_Spring !== "" &&
+      Take_up_Rubber !== "" &&
+      Bobbin_Case !== "" &&
+      Feed_Dog !== "" &&
+      Presser_Foot !== "" &&
+      Tension_Assembly !== "" &&
+      Hook_Assembly !== "" &&
+      Timing_Components !== "" &&
+      Oil_Filling !== "" &&
+      Dust_Remove !== "" &&
+      Serial_No !== ""
     ) {
       const ob = {
         Brand: Brand,
@@ -63,233 +97,257 @@ export default function AddSewingMachine({ children }) {
           "Oil Filling": Number(Oil_Filling),
           "Dust Remove": Number(Dust_Remove),
         },
-        status:status
+        status: status,
       };
-      console.log("came 1");
+
       axios
         .post("http://localhost:5005/predict/Inventory", ob)
         .then((res) => {
           console.log(res.data);
-          //   toast.success("New swing machine added");
-            navigate('/SewingDashboard')
+          setSnackbar({
+            open: true,
+            message: "Added Successfully",
+            severity: "success",
+          });
+          // Optionally navigate after a delay
+          setTimeout(() => {
+            navigate("/SewingDashboard");
+          }, 1500);
         })
         .catch((err) => {
           console.log(err);
-          //toast.error("Try Again!");
+          setSnackbar({
+            open: true,
+            message: "An error occurred. Please try again!",
+            severity: "error",
+          });
         });
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Please fill in all the fields.",
+        severity: "warning",
+      });
     }
   };
 
   return (
     <PageMain title="Dynamic Seat Planner">
-    <Box >
-
+      <Box>
         <Box
           sx={{
-            width: "80%",
+            width: "90%",
+            maxWidth: "1200px",
             margin: "0 auto",
             marginBottom: "50px",
-            padding: 1,
+            padding: 3,
+            boxShadow: 3,
+            borderRadius: 2,
+            backgroundColor: "#f9f9f9",
           }}
         >
-          <Box sx={{ textAlign: "center" }}>
-            <h1>Swing Informations</h1>
+          <Box sx={{ textAlign: "center", marginBottom: 3 }}>
+            <h1>Fill Sewing Machine Information</h1>
           </Box>
           <form>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 2,
-                paddingTop: "15px",
-              }}
-            >
-              <TextField
-                label="Brand (Juki)"
-                variant="outlined"
-                sx={{ width: "80ch" }}
-                onChange={(e) => setBrands(e.target.value)}
-              />
-              <TextField
-                label="Type (Single Needle)"
-                variant="outlined"
-                sx={{ width: "80ch" }}
-                onChange={(e) => setType(e.target.value)}
-              />
-            </Box>
+            <Grid container spacing={2}>
+              {/* Row 1 */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Brand (Juki)"
+                  variant="outlined"
+                  fullWidth
+                  value={Brand}
+                  onChange={(e) => setBrands(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Type (Single Needle)"
+                  variant="outlined"
+                  fullWidth
+                  value={Type}
+                  onChange={(e) => setType(e.target.value)}
+                />
+              </Grid>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 2,
-                paddingTop: "15px",
-              }}
-            >
-              <TextField
-                label="Manufacture Year"
-                variant="outlined"
-                type="number"
-                sx={{ width: "80ch" }}
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                onChange={(e) => setM_Year(e.target.value)}
-              />
-              <TextField
-                label="Fabric Type (Heavy [GSM = 150 - 300] / Medium [GSM = 300 - 500]) "
-                variant="outlined"
-                sx={{ width: "80ch" }}
-                onChange={(e) => setFabric_Type(e.target.value)}
-              />
-            </Box>
+              {/* Row 2 */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Manufacture Year"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={M_Year}
+                  onChange={(e) => setM_Year(e.target.value)}
+                  inputProps={{ min: 2006, max: 2020 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Fabric Type (Heavy [GSM = 150 - 300] / Medium [GSM = 300 - 500])"
+                  variant="outlined"
+                  fullWidth
+                  value={Fabric_Type}
+                  onChange={(e) => setFabric_Type(e.target.value)}
+                  helperText="Enter 'Heavy' or 'Medium'"
+                />
+              </Grid>
 
-            <TextField
-              label="Serial No"
-              variant="outlined"
-              sx={{ width: "100%", paddingTop: "15px" }}
-              onChange={(e) => setSerialNo(e.target.value)}
-            />
+              {/* Row 3 */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Serial No"
+                  variant="outlined"
+                  fullWidth
+                  value={Serial_No}
+                  onChange={(e) => setSerialNo(e.target.value)}
+                />
+              </Grid>
+
+              {/* Usage Fields */}
+              {/* Take up Spring & Rubber */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Take up Spring Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Take_up_Spring}
+                  onChange={(e) => setTake_up_Spring(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Take up Rubber Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Take_up_Rubber}
+                  onChange={(e) => setTake_up_Rubber(e.target.value)}
+                />
+              </Grid>
+
+              {/* Bobbin Case & Feed Dog */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Bobbin Case Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Bobbin_Case}
+                  onChange={(e) => setBobbin_Case(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Feed Dog Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Feed_Dog}
+                  onChange={(e) => setFeed_Dog(e.target.value)}
+                />
+              </Grid>
+
+              {/* Presser Foot & Timing Components */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Presser Foot Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Presser_Foot}
+                  onChange={(e) => setPresser_Foot(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Timing Components Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Timing_Components}
+                  onChange={(e) => setTiming_Components(e.target.value)}
+                />
+              </Grid>
+
+              {/* Oil Filling & Dust Remove */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Oil Filling Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Oil_Filling}
+                  onChange={(e) => setOil_Filling(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Dust Remove Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Dust_Remove}
+                  onChange={(e) => setDust_Remove(e.target.value)}
+                />
+              </Grid>
+
+              {/* Tension Assembly & Hook Assembly */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Tension Assembly Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Tension_Assembly}
+                  onChange={(e) => setTension_Assembly(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Hook Assembly Used Hours"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={Hook_Assembly}
+                  onChange={(e) => setHook_Assembly(e.target.value)}
+                />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ textAlign: "center", marginTop: 4 }}>
+              <Button
+                type="button"
+                color="primary"
+                variant="contained"
+                size="large"
+                onClick={submitForm}
+                sx={{ paddingX: 5, paddingY: 1.5 }}
+              >
+                Add
+              </Button>
+            </Box>
           </form>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 2,
-              paddingTop: "15px",
-            }}
-          >
-            <TextField
-              label="Take up Spring Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setTake_up_Spring(e.target.value)}
-            />
-            <TextField
-              label="Take up Rubber Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setTake_up_Rubber(e.target.value)}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 2,
-              paddingTop: "15px",
-            }}
-          >
-            <TextField
-              label="Bobbin Case Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setBobbin_Case(e.target.value)}
-            />
-            <TextField
-              label="Feed Dog Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setFeed_Dog(e.target.value)}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 2,
-              paddingTop: "15px",
-            }}
-          >
-            <TextField
-              label="Presser Foot Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setPresser_Foot(e.target.value)}
-            />
-            <TextField
-              label="Timing Components Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setTiming_Components(e.target.value)}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 2,
-              paddingTop: "15px",
-            }}
-          >
-            <TextField
-              label="Oil Filling Used Hours"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setOil_Filling(e.target.value)}
-            />
-            <TextField
-              label="Dust Remove "
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setDust_Remove(e.target.value)}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 2,
-              paddingTop: "15px",
-            }}
-          >
-            <TextField
-              label="Tension Assembly"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setTension_Assembly(e.target.value)}
-            />
-            <TextField
-              label="Hook Assembly"
-              variant="outlined"
-              type="number"
-              sx={{ width: "80ch" }}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              onChange={(e) => setHook_Assembly(e.target.value)}
-            />
-          </Box>
-
-          <Button
-            type="submit"
-            color="primary"
-            variant="contained"
-            style={{ width: "10%", marginTop: "15px" }}
-            onClick={submitForm}
-          >
-            {" "}
-            Add
-          </Button>
         </Box>
-    
-    </Box>
+
+        {/* Snackbar for notifications */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Box>
     </PageMain>
   );
 }

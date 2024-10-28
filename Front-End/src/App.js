@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios for making HTTP requests
 import { BrowserRouter as BRouter, Route, Routes } from "react-router-dom";
 
 import Dashboard from "./pages/Common/Dashboard";
@@ -22,6 +24,34 @@ import AddSewingMachine from "./pages/Predictive_Maintenance/AddSewingMachine";
 import SewingDashboard from "./pages/Predictive_Maintenance/SewingDashboard";
 
 function App() {
+
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Function to fetch data from the backend API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5005/thingspeak/data'); // Replace with your backend API endpoint
+        setData(response.data); // Update state with the fetched data
+        console.log(response.data)
+        setError(null); // Clear any previous errors
+      } catch (err) {
+        setError('Failed to fetch data'); // Update state with the error message
+        console.error(err); // Log the error to the console
+      }
+    };
+
+    // Fetch data initially
+    fetchData();
+
+   
+    const intervalId = setInterval(fetchData, 60000); 
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array to run effect once on mount
+
   return (
     <BRouter>
       <Routes>

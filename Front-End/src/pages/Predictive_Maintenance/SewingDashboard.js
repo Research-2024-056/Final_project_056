@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
-import { Button } from "@mui/material";
+import { Button, Typography, Paper, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PageMain from "../../components/PageMain";
+
+// **Import the Delete and Add icons from Material-UI**
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function SewingDashboard({ children }) {
   const navigate = useNavigate();
@@ -14,7 +18,13 @@ export default function SewingDashboard({ children }) {
   const [due_swing, setDueSwing] = useState([]);
   const [allMachine, setAllMachine] = useState([]);
 
-  useEffect(() => {
+  // **State for Snackbar notifications**
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // 'success', 'error', etc.
+
+  // **Function to fetch all data**
+  const fetchData = () => {
     axios
       .get("http://localhost:5005/collection/Inventory/working")
       .then((res) => {
@@ -44,7 +54,19 @@ export default function SewingDashboard({ children }) {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchData(); // Initial data fetch
+
+    // **Set up interval to fetch data every 5 seconds**
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000); // 5000 milliseconds = 5 seconds
+
+    // **Cleanup interval on component unmount**
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array ensures this runs once on mount
 
   const columns = [
     {
@@ -59,24 +81,37 @@ export default function SewingDashboard({ children }) {
     { field: "M_Year", headerName: "Manufacture Year", flex: 1 },
   ];
 
-  const getCellStyles = (value) => ({ 
+  const getCellStyles = (value) => ({
     backgroundColor: value < 24 ? "#dc143c" : "inherit",
     cursor: "pointer", // Make the cursor a pointer to indicate it's clickable
   });
 
-  const  deleteItem = (no) => {
+  const deleteItem = (no) => {
     if (window.confirm("Are you sure you want to delete it?")) {
-    const ob = {
-      "serial_no":no
+      const ob = {
+        serial_no: no,
+      };
+      axios
+        .post("http://localhost:5005/collection/Inventory/delete", ob)
+        .then((res) => {
+          // **Show success snackbar**
+          setSnackbarMessage("Deleted Machine");
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
+
+          // **Auto-refresh data**
+          fetchData();
+        })
+        .catch((err) => {
+          console.log(err);
+          // **Show error snackbar**
+          setSnackbarMessage("Failed to Delete Machine");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+        });
     }
-    axios.post("http://localhost:5005/collection/Inventory/delete",ob).then((res)=>{
-      window.location.reload(); // This will reload the page
-    }).catch((err)=>{
-      console.log(err)
-    })
- 
-  }
-}
+  };
+
   const handleCellClick = (row, val) => {
     const ob = {
       Brand: row.Brand,
@@ -96,23 +131,36 @@ export default function SewingDashboard({ children }) {
         "Oil Filling": Number(0),
         "Dust Remove": Number(0),
       },
-      status:row.status
+      status: row.status,
     };
-    if (window.confirm("Are you sure you replace it?")) {
+    if (window.confirm("Are you sure you want to replace it?")) {
       // Send the data to the backend using axios
       axios
         .post("http://localhost:5005/predictupdate/Inventory", ob)
         .then((response) => {
           const ob2 = {
-            serial_no:response.data.Serial_No,
+            serial_no: response.data.Serial_No,
             column_name: val,
-            column_value: response.data[val]
-          }
-          axios.post("http://localhost:5005/collection/Inventory/update",ob2).then((res)=>{
-            window.location.reload(); // This will reload the page
-          }).catch((err)=>{
-            console.log(err)
-          })
+            column_value: response.data[val],
+          };
+          axios
+            .post("http://localhost:5005/collection/Inventory/update", ob2)
+            .then((res) => {
+              // **Show success snackbar**
+              setSnackbarMessage("Replaced Component");
+              setSnackbarSeverity("success");
+              setOpenSnackbar(true);
+
+              // **Auto-refresh data**
+              fetchData();
+            })
+            .catch((err) => {
+              console.log(err);
+              // **Show error snackbar**
+              setSnackbarMessage("Failed to Replace Component");
+              setSnackbarSeverity("error");
+              setOpenSnackbar(true);
+            });
         })
         .catch((error) => {
           console.error("Error sending data:", error);
@@ -142,16 +190,18 @@ export default function SewingDashboard({ children }) {
     { field: "Take up Spring", headerName: "Take up Spring", flex: 1 },
     { field: "Tension Assembly", headerName: "Tension Assembly", flex: 1 },
     { field: "Timing Components", headerName: "Timing Components", flex: 1 },
-    { field: "Action", headerName: "Action", flex: 1,
+    {
+      field: "Action",
+      headerName: "Action",
+      flex: 1,
       renderCell: (params) => (
-        <div style={{color:'red'}}
-         
+        // **Use the DeleteIcon from Material-UI instead of a simple 'X'**
+        <DeleteIcon
+          style={{ color: "red", cursor: "pointer" }}
           onClick={() => deleteItem(params.row.Serial_No)}
-        >
-        X
-        </div>
+        />
       ),
-     },
+    },
   ];
 
   const columns1 = [
@@ -168,10 +218,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Bobbin Case")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Bobbin Case")}>
           {params.value}
         </div>
       ),
@@ -182,10 +229,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row, "Dust Remove")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Dust Remove")}>
           {params.value}
         </div>
       ),
@@ -196,10 +240,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row, "Feed Dog")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Feed Dog")}>
           {params.value}
         </div>
       ),
@@ -210,10 +251,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Hook Assembly")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Hook Assembly")}>
           {params.value}
         </div>
       ),
@@ -224,10 +262,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row, "M_Year")}
-        >
+        <div onClick={() => handleCellClick(params.row, "M_Year")}>
           {params.value}
         </div>
       ),
@@ -238,10 +273,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Oil Filling")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Oil Filling")}>
           {params.value}
         </div>
       ),
@@ -252,10 +284,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Presser Foot")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Presser Foot")}>
           {params.value}
         </div>
       ),
@@ -266,10 +295,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Take up Rubber")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Take up Rubber")}>
           {params.value}
         </div>
       ),
@@ -280,10 +306,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Take up Spring")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Take up Spring")}>
           {params.value}
         </div>
       ),
@@ -294,10 +317,7 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Tension Assembly")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Tension Assembly")}>
           {params.value}
         </div>
       ),
@@ -308,40 +328,66 @@ export default function SewingDashboard({ children }) {
       flex: 1,
       cellClassName: (params) => getCellStyles(params.value),
       renderCell: (params) => (
-        <div
-          
-          onClick={() => handleCellClick(params.row,"Timing Components")}
-        >
+        <div onClick={() => handleCellClick(params.row, "Timing Components")}>
           {params.value}
         </div>
       ),
     },
   ];
 
+  // **Function to handle closing the Snackbar**
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   return (
     <PageMain title="Dynamic Seat Planner">
       <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={10}>
-            {" "}
-            <h1>Sewing machine monitoring system</h1>
-          </Grid>
-          <Grid item xs={2}>
-            {" "}
-            <Button
-              color="primary"
-              sx={{ marginTop: 4 }}
-              variant="contained"
-              onClick={() => navigate("/AddSewingMachine")}
+        {/* **Improved Header Section** */}
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 2,
+            marginBottom: 4,
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Grid container alignItems="center">
+            <Grid item xs={12} md={10}>
+              <Typography variant="h4" component="h1" color="primary">
+                Sewing Machine Monitoring System
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={2}
+              sx={{
+                textAlign: { xs: "left", md: "right" },
+                marginTop: { xs: 2, md: 0 },
+              }}
             >
-              {" "}
-              Add New
-            </Button>
+              <Button
+                color="primary"
+                sx={{ display: "flex", alignItems: "center" }}
+                variant="contained"
+                startIcon={<AddIcon />} // **Add an icon to the button**
+                onClick={() => navigate("/AddSewingMachine")}
+              >
+                Add New
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
+        </Paper>
+
         <Grid container spacing={2} sx={{ paddingTop: 5 }}>
-          <Grid item xs={4}>
-            <h3 style={{ textAlign: "center" }}>Working Machine</h3>
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" align="center" gutterBottom>
+              Working Machine
+            </Typography>
             <Box
               m="0 0 0 0"
               width={"100%"}
@@ -357,7 +403,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "navyblue",
+                  backgroundColor: "lightgray", // Updated to light gray
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -383,8 +429,10 @@ export default function SewingDashboard({ children }) {
               />
             </Box>
           </Grid>
-          <Grid item xs={8}>
-            <h3 style={{ textAlign: "center" }}>Due Maintenance</h3>
+          <Grid item xs={12} md={8}>
+            <Typography variant="h6" align="center" gutterBottom>
+              Due Maintenance
+            </Typography>
             <Box
               m="0 0 0 0"
               width={"100%"}
@@ -403,7 +451,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "navy",
+                  backgroundColor: "lightgray", // Updated to light gray
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -451,7 +499,9 @@ export default function SewingDashboard({ children }) {
         </Grid>
         <Grid item xs={12} sx={{ paddingTop: 5 }}>
           <Grid>
-            <h3 style={{ textAlign: "center" }}>All Machine</h3>
+            <Typography variant="h6" align="center" gutterBottom>
+              All Machine
+            </Typography>
             <Box
               m="5px"
               height="75vh"
@@ -466,7 +516,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#5b92e5",
+                  backgroundColor: "lightgray", // Updated to light gray
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -494,6 +544,24 @@ export default function SewingDashboard({ children }) {
           </Grid>
         </Grid>
       </Box>
+
+      {/* **Snackbar for Notifications** */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </PageMain>
   );
 }
