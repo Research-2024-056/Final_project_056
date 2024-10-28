@@ -145,16 +145,17 @@ function WorkLoad() {
           `/Orders/${orderKey}/assemblyOrders`
         );
 
-        await push(assemblyOrderRef, {
+        const newAssemblyOrderRef = await push(assemblyOrderRef, {
           machineNumber,
           needleType,
           assemblyType,
           stitchPattern,
           employee,
         });
+        const newDocumentId = newAssemblyOrderRef.key;
 
         alert("New Assembly Order Created Successfully!");
-        navigate(`/workload/${orderNumber}}`);
+        navigate(`/workload/${orderNumber}/${newDocumentId}}`);
         // navigate(`/needledashboard/${orderData[0].MachineNumber}`);
       } else {
         alert(
@@ -207,9 +208,7 @@ function WorkLoad() {
 
     fetchData();
     fetchEmployee();
-  }, [orderNumber
-    
-  ]);
+  }, [orderNumber]);
   if (loading) {
     return (
       <PageMain>
