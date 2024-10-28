@@ -2,31 +2,89 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
   Typography,
-  Button,
   CircularProgress,
+  Button,
+  TextField,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import PageMain from "../../components/PageMain";
-import { ref, onValue, query, orderByChild, equalTo } from "firebase/database"; // Adjust the path as necessary
+import {
+  ref,
+  onValue,
+  query,
+  orderByChild,
+  equalTo,
+  set,
+} from "firebase/database"; // Adjust the path as necessary
 import { projectFirestore } from "../../components/firebase-config";
-function OrderDetails() {
-  const { ordernumber } = useParams();
+
+function WorkloadOverview() {
+  const { ordernumber, documentid } = useParams();
   const [orderData, setOrderData] = useState([]);
-  const [orderAssemblyData, setOrderAssemblyData] = useState([]);
+  const [mainorderData, setMainOrderData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [orderNumber, setOrderNumber] = useState("");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    const orderRef = ref(projectFirestore, `/Orders`);
+    const queryRef = query(
+      orderRef,
+      orderByChild("OrderNumber"),
+      equalTo(ordernumber)
+    );
+
+    try {
+      // Listen to the query to get the specific order key
+      onValue(
+        queryRef,
+        async (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const order = Object.values(data)[0];
+            const orderKey = Object.keys(data)[0];
+            const specificAssemblyOrder = order.assemblyOrders[documentid];
+
+            if (specificAssemblyOrder) {
+              // Update the "Started" field to true
+              const specificOrderRef = ref(
+                projectFirestore,
+                `/Orders/${orderKey}/assemblyOrders/${documentid}`
+              );
+
+              await set(specificOrderRef, {
+                ...specificAssemblyOrder, // Keep the existing fields
+                Started: "true", // Update or add the "Started" field
+              });
+
+              alert("Order Started Successfully!");
+
+              // Navigate to the real-time dashboard after starting the order
+              navigate(
+                `/realTimeDashboard/${orderData.machineNumber}/${order.OrderNumber}`
+              );
+            } else {
+              alert("Assembly order not found!");
+            }
+          } else {
+            alert("Order not found!");
+          }
+          setLoading(false);
+        },
+        (error) => {
+          setError("Error fetching data");
+          setLoading(false);
+        }
+      );
+    } catch (error) {
+      console.error("Error Starting Order:", error.message);
+    }
+  };
+
+  const handleDirectToHome = () => {
+    navigate(`/OrderDetails/${ordernumber}`);
+  };
   useEffect(() => {
     const fetchData = () => {
       const orderRef = ref(projectFirestore, `/Orders`);
@@ -39,12 +97,11 @@ function OrderDetails() {
         queryRef,
         (snapshot) => {
           const data = snapshot.val();
+
           if (data) {
             const order = Object.values(data)[0]; // Assuming only one order matches
-            setOrderData(order);
-            setOrderNumber(order.OrderNumber);
-            setOrderAssemblyData(order.assemblyOrders || {});
-            console.log(order.assemblyOrders);
+            setMainOrderData(order);
+            setOrderData(order.assemblyOrders[documentid]);
           }
           setLoading(false);
         },
@@ -85,9 +142,9 @@ function OrderDetails() {
     );
   }
 
-  const handleButtonClick = (ordernumberNavigate) => {
-    navigate("/Createworkload", { state: ordernumberNavigate }); // Navigate to Services page
-  };
+  //   const handleButtonClick = (ordernumberNavigate) => {
+  //     navigate("/Createworkload", { state: ordernumberNavigate }); // Navigate to Services page
+  //   };
 
   return (
     <PageMain>
@@ -99,10 +156,9 @@ function OrderDetails() {
           fontFamily: "poppins",
         }}
       >
-        Order Page
+        Machine WorkLoad
       </Typography>
-
-      <form onSubmit={handleButtonClick}>
+      <form>
         <Box
           sx={{
             marginTop: "20px",
@@ -124,63 +180,11 @@ function OrderDetails() {
           >
             Order Number
           </Typography>
-          <TextField
-            value={orderData.OrderNumber}
-            disabled
-            sx={{ width: "70%" }}
-          />
+          <TextField value={ordernumber} disabled sx={{ width: "70%" }} />
         </Box>
         <Box
           sx={{
-            marginBottom: "20px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            sx={{
-              lineHeight: 1,
-              fontSize: "1.5rem",
-              fontFamily: "poppins",
-              color: "darkblue",
-              marginLeft: "5%",
-            }}
-          >
-            Start Date
-          </Typography>
-          <TextField
-            sx={{ width: "70%" }}
-            disabled
-            value={orderData.StartDate}
-          />
-        </Box>
-        <Box
-          sx={{
-            marginBottom: "20px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            sx={{
-              lineHeight: 1,
-              fontSize: "1.5rem",
-              fontFamily: "poppins",
-              color: "darkblue",
-              marginLeft: "5%",
-            }}
-          >
-            End Date
-          </Typography>
-          <TextField sx={{ width: "70%" }} disabled value={orderData.EndDate} />
-        </Box>
-
-        <Box
-          sx={{
+            marginTop: "20px",
             marginBottom: "20px",
             display: "flex",
             flexDirection: "row",
@@ -200,9 +204,88 @@ function OrderDetails() {
             Number of Units
           </Typography>
           <TextField
+            value={mainorderData.NumberOfUnits}
+            disabled
+            sx={{ width: "70%" }}
+          />
+        </Box>
+        <Box
+          sx={{
+            marginTop: "20px",
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              lineHeight: 1,
+              fontSize: "1.5rem",
+              fontFamily: "poppins",
+              color: "darkblue",
+              marginLeft: "5%",
+            }}
+          >
+            End Use
+          </Typography>
+          <TextField
+            value={mainorderData.EndUse}
+            disabled
+            sx={{ width: "70%" }}
+          />
+        </Box>
+        <Box
+          sx={{
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              lineHeight: 1,
+              fontSize: "1.5rem",
+              fontFamily: "poppins",
+              color: "darkblue",
+              marginLeft: "5%",
+            }}
+          >
+            Machine Number
+          </Typography>
+          <TextField
             sx={{ width: "70%" }}
             disabled
-            value={orderData.NumberOfUnits}
+            value={orderData.machineNumber}
+          />
+        </Box>
+        <Box
+          sx={{
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              lineHeight: 1,
+              fontSize: "1.5rem",
+              fontFamily: "poppins",
+              color: "darkblue",
+              marginLeft: "5%",
+            }}
+          >
+            Assembly Type
+          </Typography>
+          <TextField
+            sx={{ width: "70%" }}
+            disabled
+            value={orderData.assemblyType}
           />
         </Box>
 
@@ -224,9 +307,13 @@ function OrderDetails() {
               marginLeft: "5%",
             }}
           >
-            End Use
+            Needle Type
           </Typography>
-          <TextField sx={{ width: "70%" }} disabled value={orderData.EndUse} />
+          <TextField
+            sx={{ width: "70%" }}
+            disabled
+            value={orderData.needleType}
+          />
         </Box>
 
         <Box
@@ -247,12 +334,39 @@ function OrderDetails() {
               marginLeft: "5%",
             }}
           >
-            Fabric Method
+            Stich patterns
           </Typography>
           <TextField
             sx={{ width: "70%" }}
             disabled
-            value={orderData.FabricMethod}
+            value={orderData.stitchPattern}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{
+              lineHeight: 1,
+              fontSize: "1.5rem",
+              fontFamily: "poppins",
+              color: "darkblue",
+              marginLeft: "5%",
+            }}
+          >
+            Employee
+          </Typography>
+          <TextField
+            sx={{ width: "70%" }}
+            disabled
+            value={orderData.employee}
           />
         </Box>
 
@@ -287,147 +401,48 @@ function OrderDetails() {
               />
             </Box>
           ))}
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleButtonClick(orderNumber)}
-          sx={{ width: "30%", marginLeft: "40%" }}
-        >
-          Create Machine Work Load
-        </Button>
-
-        {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={(event) => {
-            if (orderData?.Started === "true") {
-              window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
-            } else if (orderData?.Started === "false") {
-              window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
-            } else {
-              handleSubmit(event); // Pass event to handleSubmit when order is not started
-            }
+        <Box
+          sx={{
+            margin: "20px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            height: "10%",
+            marginTop: "50px",
           }}
-          sx={{ width: "30%", marginLeft: "40%" }}
         >
-          {orderData?.Started === "true"
-            ? "Go To Order" // Label for active order
-            : orderData?.Started === "false"
-            ? "Order Completed" // Label for completed order
-            : "Start Order"}{" "}
-        </Button> */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(event) => {
+              if (orderData?.Started === "true") {
+                window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
+              } else if (orderData?.Started === "false") {
+                window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
+              } else {
+                handleSubmit(event); // Pass event to handleSubmit when order is not started
+              }
+            }}
+            sx={{ width: "30%" }}
+          >
+            {orderData?.Started === "true"
+              ? "Go To Order" // Label for active order
+              : orderData?.Started === "false"
+              ? "Order Completed" // Label for completed order
+              : "Start Order"}{" "}
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{ width: "40%" }}
+            onClick={() => handleDirectToHome()}
+          >
+            Order Page
+          </Button>
+        </Box>
       </form>
-      <br></br>
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: 600, fontFamily: "Poppins", marginBottom: "3%" }}
-      >
-        Order Work Load Distribution
-      </Typography>
-      <TableContainer component={Paper} sx={{ marginTop: "30px" }}>
-        <Table>
-          <TableHead>
-            <TableRow
-              sx={{
-                backgroundColor: "#063970",
-              }}
-            >
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
-                Machine Number
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
-                Assembly Type
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
-                Needle Type
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
-                Stitch Pattern
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
-                Employee
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              ></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(orderAssemblyData).map(([keys, assemblyData]) => (
-              <TableRow
-                key={keys}
-                component={Link} // Make the Box a Link component
-                to={`/workload/${ordernumber}/${keys}`}
-                sx={{
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "#F1F1F1", // Optional hover effect
-                  },
-                }}
-              >
-                <TableCell>{assemblyData.machineNumber}</TableCell>
-                <TableCell>{assemblyData.assemblyType}</TableCell>
-                <TableCell>{assemblyData.needleType}</TableCell>
-                <TableCell>{assemblyData.stitchPattern}</TableCell>
-                <TableCell>{assemblyData.employee}</TableCell>
-                <TableCell>
-                  {assemblyData.Started === "true" ? (
-                    <span style={{ color: "green", fontWeight: "bold" }}>
-                      In Progress
-                    </span>
-                  ) : assemblyData.Started === "false" ? (
-                    <span style={{ color: "blue", fontWeight: "bold" }}>
-                      Completed
-                    </span>
-                  ) : (
-                    <span style={{ color: "gray", fontWeight: "bold" }}>
-                      Not Started
-                    </span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
     </PageMain>
   );
 }
 
-export default OrderDetails;
+export default WorkloadOverview;

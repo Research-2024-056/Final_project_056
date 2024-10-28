@@ -80,45 +80,6 @@ function WorkLoad() {
   const [employee, setEmployee] = useState("");
   const [employees, setEmployees] = useState([]);
 
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault(); // Prevent default form submission behavior
-  //     const orderRef = ref(projectFirestore, `/Orders`);
-  //     const queryRef = query(
-  //       orderRef,
-  //       orderByChild("OrderNumber"),
-  //       equalTo(ordernumber)
-  //     );
-
-  //     try {
-  //       // Listen to the query to get the specific order key
-  //       onValue(queryRef, async (snapshot) => {
-  //         if (snapshot.exists()) {
-  //           // Get the key of the first matching order
-  //           const orderKey = Object.keys(snapshot.val())[0];
-  //           const specificOrderRef = ref(projectFirestore, `/Orders/${orderKey}`);
-
-  //           // Update the order's "Started" field
-  //           await set(specificOrderRef, {
-  //             ...snapshot.val()[orderKey], // Keep the existing fields
-  //             Started: "true", // Update or add the "Started" field
-  //           });
-
-  //           alert("Order Started Successfully!");
-
-  //           // Navigate to the real-time dashboard after starting the order
-  //           navigate(
-  //             `/realTimeDashboard/${snapshot.val()[orderKey].MachineNumber}/${
-  //               snapshot.val()[orderKey].OrderNumber
-  //             }`
-  //           );
-  //         } else {
-  //           alert("Order not found!");
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.error("Error Starting Order:", error.message);
-  //     }
-  //   };
   const handleSubmit = async (
     // Ensure orderNumber is a parameter
     assemblyType,
@@ -127,45 +88,59 @@ function WorkLoad() {
     stitchPattern,
     employee
   ) => {
-    try {
-      const orderRef = ref(projectFirestore, `/Orders`);
-      const queryRef = query(
-        orderRef,
-        orderByChild("OrderNumber"), // Order by OrderNumber
-        equalTo(orderNumber) // Equal to the provided order number
-      );
-
-      const snapshot = await get(queryRef); // Use get for a one-time read
-      const data = snapshot.val();
-
-      if (data) {
-        const orderKey = Object.keys(data)[0]; // Get the first order's key
-        const assemblyOrderRef = ref(
-          projectFirestore,
-          `/Orders/${orderKey}/assemblyOrders`
+    if (
+      !assemblyType ||
+      !machineNumber ||
+      !needleType ||
+      !stitchPattern ||
+      !employee
+    ) {
+      alert("Please enter all necessary data");
+    } else {
+      try {
+        const orderRef = ref(projectFirestore, `/Orders`);
+        const queryRef = query(
+          orderRef,
+          orderByChild("OrderNumber"), // Order by OrderNumber
+          equalTo(orderNumber) // Equal to the provided order number
         );
 
-        const newAssemblyOrderRef = await push(assemblyOrderRef, {
-          machineNumber,
-          needleType,
-          assemblyType,
-          stitchPattern,
-          employee,
-        });
-        const newDocumentId = newAssemblyOrderRef.key;
+        const snapshot = await get(queryRef); // Use get for a one-time read
+        const data = snapshot.val();
 
-        alert("New Assembly Order Created Successfully!");
-        navigate(`/workload/${orderNumber}/${newDocumentId}}`);
-        // navigate(`/needledashboard/${orderData[0].MachineNumber}`);
-      } else {
-        alert(
-          `Order with the specified OrderNumber (${orderNumber}) not found.`
-        );
+        if (data) {
+          const orderKey = Object.keys(data)[0]; // Get the first order's key
+          const assemblyOrderRef = ref(
+            projectFirestore,
+            `/Orders/${orderKey}/assemblyOrders`
+          );
+
+          const newAssemblyOrderRef = await push(assemblyOrderRef, {
+            machineNumber,
+            needleType,
+            assemblyType,
+            stitchPattern,
+            employee,
+          });
+          const newDocumentId = newAssemblyOrderRef.key;
+
+          alert("New Assembly Order Created Successfully!");
+          navigate(`/workload/${orderNumber}/${newDocumentId}`);
+          // navigate(`/needledashboard/${orderData[0].MachineNumber}`);
+        } else {
+          alert(
+            `Order with the specified OrderNumber (${orderNumber}) not found.`
+          );
+        }
+      } catch (error) {
+        console.error("Error creating assembly order:", error); // Log error for debugging
+        alert("An error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error("Error creating assembly order:", error); // Log error for debugging
-      alert("An error occurred. Please try again.");
     }
+  };
+
+  const handleDirectToHome = () => {
+    navigate(`/OrderDetails/${orderNumber}`);
   };
 
   useEffect(() => {
@@ -183,6 +158,7 @@ function WorkLoad() {
           if (data) {
             const order = Object.values(data)[0]; // Assuming only one order matches
             setOrderData(order);
+            console.log("order", order);
           }
           setLoading(false);
         },
@@ -209,6 +185,7 @@ function WorkLoad() {
     fetchData();
     fetchEmployee();
   }, [orderNumber]);
+
   if (loading) {
     return (
       <PageMain>
@@ -235,6 +212,15 @@ function WorkLoad() {
       </PageMain>
     );
   }
+
+  const usedMachineNumbers = Object.values(orderData?.assemblyOrders || {}).map(
+    (order) => order.machineNumber
+  );
+
+  // Filter the machine number options
+  const availableMachineNumberOptions = machinenumberoptions.filter(
+    (option) => !usedMachineNumbers.includes(option.value)
+  );
 
   return (
     <PageMain>
@@ -352,20 +338,19 @@ function WorkLoad() {
           value={machineNumber}
           onChange={(e) => setMachineNumber(e.target.value)}
           required
-          // Limit the dropdown menu size
           SelectProps={{
             MenuProps: {
               PaperProps: {
                 style: {
-                  maxHeight: 200, // Max height for dropdown menu
-                  width: 250, // Width for dropdown menu
+                  maxHeight: 200,
+                  width: 250,
                 },
               },
             },
           }}
           aria-hidden="false"
         >
-          {machinenumberoptions.map((option) => (
+          {availableMachineNumberOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>
@@ -438,73 +423,40 @@ function WorkLoad() {
           ))}
         </TextField>
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ width: "30%", marginLeft: "40%" }}
-        onClick={() =>
-          handleSubmit(
-            assemblyType,
-            machineNumber,
-            needleType,
-            stichpattern,
-            employee
-          )
-        }
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+          height: "10%",
+          marginTop: "50px",
+        }}
       >
-        Create Machine Work Load
-      </Button>
-
-      {/* <Button
+        <Button
           variant="contained"
           color="primary"
-          onClick={(event) => {
-            if (orderData?.Started === "true") {
-              window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
-            } else if (orderData?.Started === "false") {
-              window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
-            } else {
-              handleSubmit(event); // Pass event to handleSubmit when order is not started
-            }
-          }}
-          sx={{ width: "30%", marginLeft: "40%" }}
-        >
-          {orderData?.Started === "true"
-            ? "Go To Order" // Label for active order
-            : orderData?.Started === "false"
-            ? "Order Completed" // Label for completed order
-            : "Start Order"}{" "}
-        </Button> */}
-
-      {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleButtonClick(orderNumber)}
-          sx={{ width: "30%", marginLeft: "40%" }}
+          sx={{ width: "40%" }}
+          onClick={() =>
+            handleSubmit(
+              assemblyType,
+              machineNumber,
+              needleType,
+              stichpattern,
+              employee
+            )
+          }
         >
           Create Machine Work Load
-        </Button> */}
-
-      {/* <Button
+        </Button>
+        <Button
           variant="contained"
-          color="primary"
-          onClick={(event) => {
-            if (orderData?.Started === "true") {
-              window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
-            } else if (orderData?.Started === "false") {
-              window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
-            } else {
-              handleSubmit(event); // Pass event to handleSubmit when order is not started
-            }
-          }}
-          sx={{ width: "30%", marginLeft: "40%" }}
+          color="secondary"
+          sx={{ width: "40%" }}
+          onClick={() => handleDirectToHome()}
         >
-          {orderData?.Started === "true"
-            ? "Go To Order" // Label for active order
-            : orderData?.Started === "false"
-            ? "Order Completed" // Label for completed order
-            : "Start Order"}{" "}
-        </Button> */}
+          Order Page
+        </Button>
+      </Box>
     </PageMain>
   );
 }
