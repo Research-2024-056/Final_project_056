@@ -14,7 +14,6 @@ import {
   query,
   orderByChild,
   equalTo,
-  set,
 } from "firebase/database"; // Adjust the path as necessary
 import { projectFirestore } from "../../components/firebase-config";
 function OrderDetails() {
@@ -52,7 +51,7 @@ function OrderDetails() {
     };
 
     fetchData();
-  }, []);
+  }, [ordernumber]);
 
   if (loading) {
     return (

@@ -13,6 +13,7 @@ import NewOrder from "./pages/Order/NewOrder";
 import OrderDetails from "./pages/Order/OrderDetails";
 import NeedleRealTime from "./pages/NeedlePerformance/NeedleRealTime";
 import WorkLoad from "./pages/Order/WorkLoad";
+import WorkloadOverview from "./pages/Order/WorkloadOverview";
 
 // Workforce Map
 import WorkforceMapDashboard from "./pages/WorkforceMap_component/WorkforceMapDashboard";
@@ -97,6 +98,11 @@ function App() {
           element={<SewingDashboard></SewingDashboard>}
         />
         <Route exact path="/Createworkload" element={<WorkLoad></WorkLoad>} />
+        <Route
+          exact
+          path="/workload/:ordernumber"
+          element={<WorkloadOverview></WorkloadOverview>}
+        />
       </Routes>
     </BRouter>
   );
