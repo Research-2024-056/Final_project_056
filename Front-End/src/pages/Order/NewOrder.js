@@ -3,25 +3,8 @@ import { Box, Button, TextField, MenuItem, Typography } from "@mui/material";
 import PageMain from "../../components/PageMain";
 import { ref, push } from "firebase/database"; // Adjust the path as necessary
 import { projectFirestore } from "../../components/firebase-config";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const needleOptions = [
-  { value: "needle_100-16", label: "Needle 100-16" },
-  { value: "needle_110-18", label: "Needle 110-18" },
-  { value: "needle_70-90", label: "Needle 70-90" },
-  { value: "needle_90-14", label: "Needle 90-14" },
-];
-const machinenumberoptions = [
-  { value: "machine1", label: "machine1" },
-  { value: "machine2", label: "machine2" },
-  { value: "machine3", label: "machine3" },
-  { value: "machine4", label: "machine4" },
-  { value: "machine5", label: "machine5" },
-  { value: "machine6", label: "machine6" },
-  { value: "machine7", label: "machine7" },
-  { value: "machine8", label: "machine8" },
-  { value: "machine9", label: "machine9" },
-];
 const enduseOptions = [
   { value: "Metallic Print T-shirt", label: "Metallic Print T-shirt" },
   { value: "Acid Wash T-shirt", label: "Acid Wash T-shirt" },
@@ -430,13 +413,13 @@ const fabricOptions = [
 
 function NewOrder() {
   const [orderNumber, setOrderNumber] = useState("");
-  const [needleType, setNeedleType] = useState("");
+  const navigate = useNavigate();
   const [numberOfUnits, setNumberOfUnits] = useState("");
   const [endUse, setEndUse] = useState("");
   const [fabricMethod, setFabricMethod] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [machineNumber, setMachineNumber] = useState("");
+
   const [fiberContent, setFiberContent] = useState([""]);
   const OrderRef = ref(projectFirestore, "/Orders");
 
@@ -467,15 +450,14 @@ function NewOrder() {
         OrderNumber: orderNumber,
         StartDate: startDate,
         EndDate: endDate,
-        NeedleType: needleType,
         NumberOfUnits: numberOfUnits,
         EndUse: endUse,
         FabricMethod: fabricMethod,
         FiberContent: fiberContent,
-        MachineNumber: machineNumber,
       });
 
       alert("New Order Created Successfully!", newOrderRef); // Set the success message
+      navigate(`/order`);
     } catch (error) {
       // Handle the error (you can show an error message to the user)
       console.error("Error Creating new Order:", error.message);
@@ -527,34 +509,6 @@ function NewOrder() {
             type="number"
             required
           />
-        </Box>
-
-        <Box sx={{ marginBottom: "20px" }}>
-          <TextField
-            select
-            label="Machine Number"
-            fullWidth
-            value={machineNumber}
-            onChange={(e) => setMachineNumber(e.target.value)}
-            required
-            // Limit the dropdown menu size
-            SelectProps={{
-              MenuProps: {
-                PaperProps: {
-                  style: {
-                    maxHeight: 200, // Max height for dropdown menu
-                    width: 250, // Width for dropdown menu
-                  },
-                },
-              },
-            }}
-          >
-            {machinenumberoptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
         </Box>
 
         <Box sx={{ marginBottom: "20px" }}>
@@ -645,33 +599,6 @@ function NewOrder() {
               </TextField>
             </Box>
           ))}
-        <Box sx={{ marginBottom: "20px" }}>
-          <TextField
-            select
-            label="Needle Type"
-            fullWidth
-            value={needleType}
-            onChange={(e) => setNeedleType(e.target.value)}
-            required
-            // Limit the dropdown menu size
-            SelectProps={{
-              MenuProps: {
-                PaperProps: {
-                  style: {
-                    maxHeight: 200, // Max height for dropdown menu
-                    width: 250, // Width for dropdown menu
-                  },
-                },
-              },
-            }}
-          >
-            {needleOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
 
         <Button type="submit" variant="contained" color="primary">
           Create Order
