@@ -76,7 +76,7 @@ function SideNav({ open, handleDrawerClose }) {
         >
 
 
-          <ListItemButton to="/">
+          <ListItemButton to="/dashboard">
             <ListItemIcon>
               <InsightsIcon sx={{ color: "#ffffff" }} />
             </ListItemIcon>
