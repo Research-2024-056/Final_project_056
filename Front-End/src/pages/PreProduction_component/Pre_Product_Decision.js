@@ -68,7 +68,7 @@ function DicisionMake() {
       'end_use': endUse
     }
 
-    axios.post('http://34.44.240.26:5001/get_fabrics_for_end_use', requestData)
+    axios.post('http://127.0.0.1:5001/get_fabrics_for_end_use', requestData)
       .then(response => {
         console.log('Fabrics and Durabilities:', response.data.fabrics_durabilities);
         setFabricsDurabilities(response.data.fabrics_durabilities);
@@ -84,7 +84,7 @@ function DicisionMake() {
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/load_all_fabric_data')
+    axios.get('http://127.0.0.1:5001/load_all_fabric_data')
       .then(response => {
         setFabricprice(response.data);
         console.log(response.data);
@@ -97,7 +97,7 @@ function DicisionMake() {
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/load_all_thread_data')
+    axios.get('http://127.0.0.1:5001/load_all_thread_data')
       .then(response => {
         setThreadprice(response.data);
         console.log(response.data);
@@ -209,7 +209,7 @@ function DicisionMake() {
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/get_end_use')
+    axios.get('http://127.0.0.1:5001/get_end_use')
       .then(response => {
         setEndUseValues(response.data.end_use_values);
       })
@@ -237,7 +237,7 @@ function DicisionMake() {
 
     console.log(post2);
 
-    axios.post('hhttp://34.44.240.26:5001/predict_futurePrice', post2)
+    axios.post('http://127.0.0.1:5001/predict_futurePrice', post2)
       .then(response => {
         console.log(response.data);
         setFabricfutureData(response.data)
@@ -266,7 +266,7 @@ function DicisionMake() {
 
     console.log(post2);
 
-    axios.post('http://34.44.240.26:5001/predict_futurePrice', post2)
+    axios.post('http://127.0.0.1:5001/predict_futurePrice', post2)
       .then(response => {
         console.log(response.data);
         setFabricfutureData(response.data)
