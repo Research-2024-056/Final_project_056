@@ -72,7 +72,7 @@ function Dashboard() {
               <PieChart
                 series={[{ data: [{ id: 0, value: 30, label: 'Textile' }, { id: 1, value: 25, label: 'Automotive' }, { id: 2, value: 20, label: 'Construction' }, { id: 3, value: 15, label: 'Electronics' }, { id: 4, value: 10, label: 'Home Furnishing' }] }]}
                 width={500}
-                height={300}
+                height={230}
               />
             </Box>
           </CardContent>
@@ -96,25 +96,7 @@ function Dashboard() {
         </Card>
       </Box>
 
-      {/* Needle Types Section */}
-      <Typography variant="h5" sx={{ fontWeight: '500', mt: 4, mb: 2 }}>
-        Needle Types
-      </Typography>
-
-      {/* Accordion for Needle Types */}
-      {['Sewing Needles', 'Medical Needles', 'Specialty Needles', 'Industrial Needles'].map((title, index) => (
-        <Accordion key={index} sx={{ boxShadow: 1, mt: 2 }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`${title}-content`} id={`${title}-header`}>
-            <Typography sx={{ color: '#008080', fontWeight: 500 }}>{title}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body1">Content for {title}.</Typography>
-          </AccordionDetails>
-        </Accordion>
-      ))}
-
-      {/* Charts Section */}
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, mt: 4 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, mt: 4, paddingLeft:"80px" }}>
         {/* Fabric Durability Chart */}
         <Card sx={{ width: '100%', maxWidth: 600, boxShadow: 2 }}>
           <CardContent>
@@ -153,6 +135,26 @@ function Dashboard() {
           </CardContent>
         </Card>
       </Box>
+
+      {/* Needle Types Section */}
+      <Typography variant="h5" sx={{ fontWeight: '500', mt: 4, mb: 2 }}>
+        Needle Types
+      </Typography>
+
+      {/* Accordion for Needle Types */}
+      {['Sewing Needles', 'Medical Needles', 'Specialty Needles', 'Industrial Needles'].map((title, index) => (
+        <Accordion key={index} sx={{ boxShadow: 1, mt: 2 }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`${title}-content`} id={`${title}-header`}>
+            <Typography sx={{ color: '#008080', fontWeight: 500 }}>{title}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1">Content for {title}.</Typography>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+
+      {/* Charts Section */}
+      
     </Box>
     </PageMain>
   );

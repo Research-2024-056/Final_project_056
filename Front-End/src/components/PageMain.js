@@ -14,6 +14,9 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useFirebaseAuth } from "../components/FirebaseContext";
+
+import firebase from 'firebase/compat/app';
 
 
 
@@ -58,6 +61,13 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
 export default function PageMain({ children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const { user,userDetails, authError ,logout } = useFirebaseAuth();
+  const logoutfunction = async () => {
+    await logout();
+ window.location = '/';
+  };
+
+  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -76,6 +86,9 @@ export default function PageMain({ children }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -129,7 +142,7 @@ export default function PageMain({ children }) {
                   },
                 }}
               >
-                <Avatar sx={{ cursor: 'pointer' }} alt="Travis Howard" src="/static/images/avatar/2.jpg" onClick={handleOpenUserMenu} />
+                <Avatar sx={{ cursor: 'pointer' }} alt={userDetails?.firstName} src="/static/images/avatar/2.jpg" onClick={handleOpenUserMenu} />
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorElUser}
@@ -174,7 +187,7 @@ export default function PageMain({ children }) {
                     <Grid item xs="auto">
                       <IconButton sx={{ p: 0 }}>
                         <Avatar width="38px"
-                          height="38px" alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+                          height="38px" alt={userDetails?.firstName} src="/static/images/avatar/2.jpg" />
 
                       </IconButton>
                     </Grid>
@@ -186,37 +199,25 @@ export default function PageMain({ children }) {
                           marginTop: '8px'
                         }}
                       >
-                        User Name
+                        {userDetails?.firstName}
                       </Typography>
                     </Grid>
                   </Grid>
 
-                  <MenuItem
-                    key={"vp"}
-                    sx={{ marginTop: '16px' }}
-                  >
-                    <Grid container>
-
-                      <Grid item xs="auto" marginLeft={theme.space_2}>
-                        <Typography
-
-                        >
-                          My Profile
-                        </Typography>
-                      </Grid>{" "}
-                    </Grid>
-                  </MenuItem>
+                  
                   <MenuItem
                     key={"vs"}
+                    sx={{ marginTop: '16px' }}
+
 
                   >
                     <Grid container>
 
                       <Grid item xs="auto" marginLeft={theme.space_2}>
                         <Typography
-
+                        onClick={logoutfunction}
                         >
-                          Settings
+                         Logout
                         </Typography>
                       </Grid>{" "}
                     </Grid>

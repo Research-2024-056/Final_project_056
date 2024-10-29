@@ -3,10 +3,12 @@ import axios from "axios"; // Import axios for making HTTP requests
 import { BrowserRouter as BRouter, Route, Routes } from "react-router-dom";
 
 import Dashboard from "./pages/Common/Dashboard";
+import Login from "./pages/Common/Login"
+import Register from "./pages/Common/Register"
 import PreProductionMain from "./pages/PreProduction_component/PreProductionDasboard";
 import Durabilitycheck from "./pages/PreProduction_component/Durability_check";
 import PreProductDecision from "./pages/PreProduction_component/Pre_Product_Decision";
-
+import { FirebaseProvider } from "./components/FirebaseContext";
 // Needle part
 import MachineSelect from "./pages/NeedlePerformance/MachineSelect";
 import NeedleDashboard from "./pages/NeedlePerformance/NeedleDashboard";
@@ -55,9 +57,12 @@ function App() {
   }, []); // Empty dependency array to run effect once on mount
 
   return (
+    <FirebaseProvider>
     <BRouter>
       <Routes>
-        <Route exact path="/" element={<Dashboard></Dashboard>} />
+        <Route exact path="/dashboard" element={<Dashboard></Dashboard>} />
+        <Route exact path="/" element={<Login></Login>} />
+        <Route exact path="/register" element={<Register></Register>} />
 
         {/* Pre Prodction Page URLs */}
         <Route
@@ -135,6 +140,7 @@ function App() {
         />
       </Routes>
     </BRouter>
+   </FirebaseProvider>
   );
 }
 
