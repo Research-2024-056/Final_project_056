@@ -24,6 +24,8 @@ function WorkloadOverview() {
   const [mainorderData, setMainOrderData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [orderKeyDoc, setOrderKey] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -44,6 +46,9 @@ function WorkloadOverview() {
           if (data) {
             const order = Object.values(data)[0];
             const orderKey = Object.keys(data)[0];
+
+            console.log("Order Key:", orderKey); // Debugging line
+
             const specificAssemblyOrder = order.assemblyOrders[documentid];
 
             if (specificAssemblyOrder) {
@@ -59,10 +64,9 @@ function WorkloadOverview() {
               });
 
               alert("Order Started Successfully!");
-
               // Navigate to the real-time dashboard after starting the order
               navigate(
-                `/realTimeDashboard/${orderData.machineNumber}/${order.OrderNumber}`
+                `/realTimeDashboard/${orderKey}/${documentid}/${ordernumber}`
               );
             } else {
               alert("Assembly order not found!");
@@ -79,6 +83,7 @@ function WorkloadOverview() {
       );
     } catch (error) {
       console.error("Error Starting Order:", error.message);
+      setLoading(false); // Ensure loading state is cleared in case of error
     }
   };
 
@@ -100,6 +105,8 @@ function WorkloadOverview() {
 
           if (data) {
             const order = Object.values(data)[0]; // Assuming only one order matches
+            const orderKey = Object.keys(data)[0];
+            setOrderKey(orderKey); // Set the order key
             setMainOrderData(order);
             setOrderData(order.assemblyOrders[documentid]);
           }
@@ -113,7 +120,7 @@ function WorkloadOverview() {
     };
 
     fetchData();
-  }, [ordernumber]);
+  }, [ordernumber, documentid]);
 
   if (loading) {
     return (
@@ -416,9 +423,9 @@ function WorkloadOverview() {
             color="primary"
             onClick={(event) => {
               if (orderData?.Started === "true") {
-                window.location.href = `/realTimeDashboard/${orderData.MachineNumber}/${orderData.OrderNumber}`; // Navigate to specific order page
+                window.location.href = `/realTimeDashboard/${orderKeyDoc}/${documentid}/${ordernumber}`; // Navigate to specific order page
               } else if (orderData?.Started === "false") {
-                window.location.href = `/needledashboard/${orderData.MachineNumber}`; // Navigate to needle dashboard
+                window.location.href = `/needledashboard/${orderKeyDoc}/${documentid}/${ordernumber}`; // Navigate to needle dashboard
               } else {
                 handleSubmit(event); // Pass event to handleSubmit when order is not started
               }
