@@ -127,7 +127,7 @@ function Login() {
 
               <Typography variant="body2" sx={{ textAlign: 'center' }}>
                 Don't have an account?{' '}
-                <Link to="/signup" style={{ color: '#000', textDecoration: 'none', fontWeight: 'bold' }}>
+                <Link to="/register" style={{ color: '#000', textDecoration: 'none', fontWeight: 'bold' }}>
                   Create an account now
                 </Link>
               </Typography>
