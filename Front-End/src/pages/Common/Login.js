@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFirebaseAuth } from "../../components/FirebaseContext";
-import { Grid, TextField, Button, Typography } from '@mui/material';
-
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Logo from '../../assets/SEAMSENSE - Copy.png'; // Add your logo image here
 
 function Login() {
   const [input, setInput] = useState({ email: "", password: "" });
@@ -15,7 +20,7 @@ function Login() {
       let email = input.email.toLowerCase().trim();
       let password = input.password;
       await login(email, password);
-      window.location="/dashboard"
+      window.location = "/dashboard";
     } catch (err) {
       setError(authError);
     }
@@ -29,128 +34,108 @@ function Login() {
   };
 
   return (
-    <div>
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', bgcolor: '#f8f8f8' }}>
+      <Grid container>
+        {/* Left Image Panel */}
+        <Grid item xs={12} sm={5} sx={{ height: '100vh', display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ height: '100%' }}>
+            <img
+              src="https://img.freepik.com/free-photo/woman-tailor-working-sewing-factory_1303-15841.jpg"
+              alt="login"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </Box>
+        </Grid>
 
-<Grid container spacing={2} >
-  <Grid item xs={12} sm={4} style={{ height: '100%' }}>
-    <div style={{ height: '100%' }}>
-      <img 
-        src="https://res.cloudinary.com/hiruniherath/image/upload/v1730135704/pexels-michael-burrows-7147460_limwym.jpg" 
-        alt="login" 
-        style={{ width: '100%', height: '100vh', objectFit: 'cover' }} 
-      />
-    </div>
-  </Grid>
-  <Grid item xs={12} sm={8} style={{ height: '100%' }}>
-    <div style={{ padding: '20px', height: '100%' , paddingLeft:"90px" , paddingTop:"100px"}}>
-    <div className="form-body">
-  <form autoComplete="off" className="form" onSubmit={handleSubmit}>
-    <Typography variant="h4" component="h1" sx={{paddingTop:"50px" , fontWeight:"800"}}>
-      Welcome to Seamsense,
-    </Typography>
-    <Typography variant="h6" component="h2"  sx={{paddingTop:"10px" , fontWeight:"800"}}>
-      Sign In to Continue
-    </Typography>
-    
-    <Typography variant="body2"  sx={{paddingTop:"20px" , fontWeight:"800"}}>
-      Don't have an account?{' '}
-      <Link href="/signup" sx={{ color: '#000000', textDecoration: 'none' ,fontWeight:"800"}}>
-        Create an account now
-      </Link>
-    </Typography>
+        {/* Login Form Panel */}
+        <Grid item xs={12} sm={7} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+          <Paper elevation={10} sx={{ padding: '40px', width: '100%', maxWidth: 500, borderRadius: 2 }}>
+            <Box sx={{ textAlign: 'center', mb: 4 }}>
+              <img src={Logo} alt="Seamsense Logo" style={{ width: '120px', marginBottom: '20px' }} />
+              <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Welcome to Seamsense,
+              </Typography>
+              <Typography variant="h6" sx={{ color: '#555' }}>
+                Sign In to Continue
+              </Typography>
+            </Box>
 
-    <Grid container spacing={2} sx={{paddingTop : "70px" , width:"700px"}}>
-    <Typography variant="body2"  sx={{paddingTop:"20px" , fontWeight:"800" , paddingLeft:"20px"}}>Enter Your Email : </Typography>
-      
-      {/* Email Input */}
-      <Grid item xs={12}>
-        <TextField
-          name="email"
-         
-          variant="outlined"
-          fullWidth
-          type="email"
-          value={input.email}
-          onChange={handleChange}
-          required
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'black', // Default border color
-              },
-              '&:hover fieldset': {
-                borderColor: 'black', // Border color on hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'black', // Border color when focused
-              },
-              '&.Mui-focused': {
-                backgroundColor: 'white', // Background color when focused
-              },
-            },}}
-          
-        />
+            <form autoComplete="off" onSubmit={handleSubmit}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                Enter Your Email:
+              </Typography>
+              <TextField
+                name="email"
+                variant="outlined"
+                fullWidth
+                type="email"
+                value={input.email}
+                onChange={handleChange}
+                required
+                sx={{
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: '#999' },
+                    '&:hover fieldset': { borderColor: '#333' },
+                    '&.Mui-focused fieldset': { borderColor: '#000' },
+                  },
+                }}
+              />
+
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                Enter Your Password:
+              </Typography>
+              <TextField
+                name="password"
+                variant="outlined"
+                fullWidth
+                type="password"
+                value={input.password}
+                onChange={handleChange}
+                required
+                sx={{
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: '#999' },
+                    '&:hover fieldset': { borderColor: '#333' },
+                    '&.Mui-focused fieldset': { borderColor: '#000' },
+                  },
+                }}
+              />
+
+              {error && (
+                <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+                  {error}
+                </Typography>
+              )}
+
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  bgcolor: '#000',
+                  color: '#fff',
+                  '&:hover': { bgcolor: '#333' },
+                  fontWeight: 'bold',
+                  py: 1.5,
+                  mb: 2
+                }}
+              >
+                Login
+              </Button>
+
+              <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                Don't have an account?{' '}
+                <Link to="/signup" style={{ color: '#000', textDecoration: 'none', fontWeight: 'bold' }}>
+                  Create an account now
+                </Link>
+              </Typography>
+            </form>
+          </Paper>
+        </Grid>
       </Grid>
-
-      {/* Password Input */}
-      <Typography variant="body2"  sx={{paddingTop:"20px" , fontWeight:"800" , paddingLeft:"20px"}}>Enter Your Password : </Typography>
-      <Grid item xs={12}>
-        <TextField
-          name="password"
-          
-          variant="outlined"
-          fullWidth
-          type="password"
-          value={input.password}
-          onChange={handleChange}
-          required
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'black', // Default border color
-              },
-              '&:hover fieldset': {
-                borderColor: 'black', // Border color on hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'black', // Border color when focused
-              },
-              '&.Mui-focused': {
-                backgroundColor: 'white', // Background color when focused
-              },
-            },}}
-        />
-      </Grid>
-
-      {/* Login Button */}
-      <Grid item xs={12}>
-        {error && (
-          <Typography color="error" variant="body2">
-            {error}
-          </Typography>
-        )}
-        < Button type="submit" variant="contained" sx={{
-    color: "#ffffff",
-    backgroundColor: "#000000",
-    '&:hover': {
-      backgroundColor: "#333333",  // Lighter shade on hover
-    },
-  }}
-  fullWidth >
-          Login
-        </Button>
-      </Grid>
-    </Grid>
-  </form>
-</div>
-      
-    
-    </div>
-  </Grid>
-</Grid>
-
-    
-    </div>
+    </Box>
   );
 }
 
