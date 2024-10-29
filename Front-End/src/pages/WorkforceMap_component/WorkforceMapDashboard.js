@@ -2,15 +2,13 @@ import React, { useState, useEffect } from "react";
 import PageMain from "../../components/PageMain";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import {
-  Grid,
-  Box,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-  Paper,
-} from "@mui/material";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import Paper from '@mui/material/Paper';
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import axios from "axios";
 import {
@@ -37,7 +35,7 @@ function WorkforceMapDashboard() {
   useEffect(() => {
     // Fetch average evolution data
     axios
-      .get("http://localhost:5000/evolution_averages")
+      .get("http://localhost:5010/evolution_averages")
       .then((response) => {
         const data = response.data;
         const formattedData = Object.keys(data).map((key) => ({
@@ -52,7 +50,7 @@ function WorkforceMapDashboard() {
 
     // Fetch employees for the dropdown
     axios
-      .get("http://localhost:5000/employees")
+      .get("http://localhost:5010/employees")
       .then((response) => {
         setEmployees(response.data);
       })
@@ -68,7 +66,7 @@ function WorkforceMapDashboard() {
     if (emp_no) {
       // Fetch employee's specific evolution data
       axios
-        .get(`http://localhost:5000/employee_performance/${emp_no}`)
+        .get(`http://localhost:5010/employee_performance/${emp_no}`)
         .then((response) => {
           const data = response.data;
           const formattedData = Object.keys(data).map((key) => ({
@@ -83,7 +81,7 @@ function WorkforceMapDashboard() {
 
       // Fetch employee's performance data for the second chart
       axios
-        .get(`http://localhost:5000/predict_performance/${emp_no}`)
+        .get(`http://localhost:5010/predict_performance/${emp_no}`)
         .then((response) => {
           let { predicted_performance, Actual_performance } = response.data;
 

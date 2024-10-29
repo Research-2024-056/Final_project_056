@@ -40,7 +40,7 @@ export default function Labor_efficiency_analysis() {
   useEffect(() => {
     const fetchEmpNoOptions = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/get_emp_no");
+        const response = await axios.get("http://localhost:5010/get_emp_no");
         setEmpNoOptions(response.data.Emp_No);
       } catch (error) {
         console.error("Error fetching Emp_No options:", error);
@@ -55,7 +55,7 @@ export default function Labor_efficiency_analysis() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/get_employee_name",
+        "http://localhost:5010/get_employee_name",
         { Emp_No: empNo }
       );
       setFormData((prevData) => ({ ...prevData, Name: response.data.Name }));
@@ -128,7 +128,7 @@ export default function Labor_efficiency_analysis() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/insert",
+        "http://localhost:5010/insert",
         newEvolutionData
       );
       alert("Data inserted successfully!");
@@ -162,7 +162,7 @@ export default function Labor_efficiency_analysis() {
     setIsLoading(true);
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/predict", {
+      const response = await axios.post("http://localhost:5010/predict", {
         Evolution_01: Evolution_01Performance,
         Evolution_02: Evolution_02Performance,
         Evolution_03: Evolution_03Performance,

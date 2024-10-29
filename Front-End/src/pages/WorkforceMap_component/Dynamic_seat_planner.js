@@ -9,25 +9,23 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import {
-  Box,
-  FormControlLabel,
-  Radio,
-  Button,
-  TextField,
-  Grid,
-  RadioGroup,
-  Card,
-  CardContent,
-  FormControl,
-  Select,
-  MenuItem,
-  IconButton,
-  Avatar,
-  Tabs,
-  Tab,
-  Drawer,
-} from "@mui/material";
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import RadioGroup from '@mui/material/RadioGroup';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Drawer from '@mui/material/Drawer';
 import PersonIcon from "@mui/icons-material/Person";
 import CloseIcon from "@mui/icons-material/Close";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
@@ -98,7 +96,7 @@ const SeatPlanner = () => {
 
       // Call the backend API to delete the task
       axios
-        .post("http://127.0.0.1:5000/delete_task", {
+        .post("http://127.0.0.1:5010/delete_task", {
           taskId: taskToDelete.productId,
         }) // Adjust the endpoint accordingly
         .then(() => {
@@ -173,7 +171,7 @@ const SeatPlanner = () => {
   // Load assigned tasks from backend on mount
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:5000/load_assigned_tasks")
+      .get("http://127.0.0.1:5010/load_assigned_tasks")
       .then((response) => setAssignedTasks(response.data))
       .catch((error) => console.error("Error loading assigned tasks:", error));
   }, []);
@@ -188,7 +186,7 @@ const SeatPlanner = () => {
         task.laborers.map((labor) => labor.Emp_No)
       );
 
-      const response = await axios.post("http://127.0.0.1:5000/seat_plan", {
+      const response = await axios.post("http://127.0.0.1:5010/seat_plan", {
         num_lines: lines,
         employees_per_line: employeesPerLine,
         filter_option: filterOption,
@@ -233,7 +231,7 @@ const SeatPlanner = () => {
 
     // Save to backend
     axios
-      .post("http://127.0.0.1:5000/save_assigned_tasks", {
+      .post("http://127.0.0.1:5010/save_assigned_tasks", {
         assignedTasks: [...assignedTasks, newTask],
       })
       .catch((error) => console.error("Error saving tasks:", error));
@@ -265,7 +263,7 @@ const SeatPlanner = () => {
         .filter((emp) => emp)
         .map((emp) => emp.Emp_No);
       const response = await axios.get(
-        "http://127.0.0.1:5000/unassigned_laborers",
+        "http://127.0.0.1:5010/unassigned_laborers",
         {
           params: { assigned_emp_nos: assignedEmpNos },
         }

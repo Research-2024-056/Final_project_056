@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PageMain from '../../components/PageMain';
-import { Typography, Box, Card, CardContent, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   LineChart,
@@ -22,7 +28,7 @@ function Dashboard() {
   const [evolutionData, setEvolutionData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/evolution_averages')
+    axios.get('http://localhost:5010/evolution_averages')
       .then((response) => {
         const data = response.data;
         const formattedData = Object.keys(data).map((key) => ({
