@@ -53,6 +53,7 @@ function SideNav({ open, handleDrawerClose }) {
       open={open}
     >
       <DrawerHeader>
+      <img src="https://res.cloudinary.com/hiruniherath/image/upload/v1726677908/WhatsApp_Image_2024-09-18_at_21.13.29_78908614-removebg-preview_kto2k2.png" alt="logo" style={{width:"150px" ,marginRight:"50px"}}/>
         <IconButton onClick={handleDrawerClose} sx={{ color: "#ffffff" }}>
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />
@@ -62,6 +63,7 @@ function SideNav({ open, handleDrawerClose }) {
         </IconButton>
       </DrawerHeader>
       <Divider />
+     
       {/* Nav items */}
       <List>
         <ListItem
@@ -72,6 +74,8 @@ function SideNav({ open, handleDrawerClose }) {
             },
           }}
         >
+
+
           <ListItemButton to="/">
             <ListItemIcon>
               <InsightsIcon sx={{ color: "#ffffff" }} />
