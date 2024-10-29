@@ -84,7 +84,7 @@ function DicisionMake() {
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/load_all_fabric_data')
+    axios.get('http://127.0.0.1:5001/load_all_fabric_data')
       .then(response => {
         setFabricprice(response.data);
         console.log(response.data);
@@ -97,7 +97,7 @@ function DicisionMake() {
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/load_all_thread_data')
+    axios.get('http://127.0.0.1:5001/load_all_thread_data')
       .then(response => {
         setThreadprice(response.data);
         console.log(response.data);
