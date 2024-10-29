@@ -25,7 +25,6 @@ import {
   getDownloadURL,
 } from "firebase/storage"; // Import Firebase Storage
 import { firebaseApp } from "./firebase-config";
-import firebase from 'firebase/compat/app';
 
 const FirebaseContext = createContext();
 
@@ -125,7 +124,7 @@ export const FirebaseProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   const fetchProducts = async () => {
     // Fetch all products

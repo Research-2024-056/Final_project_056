@@ -16,10 +16,6 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useFirebaseAuth } from "../components/FirebaseContext";
 
-import firebase from 'firebase/compat/app';
-
-
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -61,7 +57,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
 export default function PageMain({ children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const { user,userDetails, authError ,logout } = useFirebaseAuth();
+  const {userDetails ,logout } = useFirebaseAuth();
   const logoutfunction = async () => {
     await logout();
  window.location = '/';

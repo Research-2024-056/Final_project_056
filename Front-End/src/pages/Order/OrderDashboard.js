@@ -162,15 +162,6 @@ function OrderDashboard() {
                   fontWeight: "bold",
                 }}
               >
-                Needle Type
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "white",
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                }}
-              >
                 Number Of Units
               </TableCell>
               <TableCell
@@ -219,7 +210,6 @@ function OrderDashboard() {
                 <TableCell>{order.OrderNumber}</TableCell>
                 <TableCell>{order.StartDate}</TableCell>
                 <TableCell>{order.EndDate}</TableCell>
-                <TableCell>{order.NeedleType}</TableCell>
                 <TableCell>{order.NumberOfUnits}</TableCell>
                 <TableCell>{order.EndUse}</TableCell>
                 <TableCell>{order.FabricMethod}</TableCell>
