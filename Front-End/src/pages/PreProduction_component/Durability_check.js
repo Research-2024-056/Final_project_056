@@ -84,7 +84,7 @@ function Durability_check() {
   // single input backend pass
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://34.44.240.26:5001/predict', [formData])
+    axios.post('http://127.0.0.1:5001/predict', [formData])
       .then(response => {
         setPrediction(response.data.predictions[0]);
         handleNext();
@@ -166,7 +166,7 @@ function Durability_check() {
     }));
 
     // Send the data to the backend
-    axios.post('http://34.44.240.26:5001/predict', requestData)
+    axios.post('http://127.0.0.1:5001/predict', requestData)
       .then(response => {
         setPrediction2(response.data.predictions[0]);
         handleNext();
@@ -208,7 +208,7 @@ function Durability_check() {
 
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
-axios.post('http://34.44.240.26:5001/predict', requestData3)
+axios.post('http://127.0.0.1:5001/predict', requestData3)
   .then(response => {
     setPrediction3(response.data.predictions[0]);
     handleNext();
@@ -223,7 +223,7 @@ axios.post('http://34.44.240.26:5001/predict', requestData3)
 
   useEffect(() => {
     // Fetch End Use values from the backend
-    axios.get('http://34.44.240.26:5001/get_end_use')
+    axios.get('http://127.0.0.1:5001/get_end_use')
       .then(response => {
         setEndUseValues(response.data.end_use_values);
       })
@@ -232,7 +232,7 @@ axios.post('http://34.44.240.26:5001/predict', requestData3)
       });
 
     // Fetch Fiber Content values from the backend
-    axios.get('http://34.44.240.26:5001/get_fiber_content')
+    axios.get('http://127.0.0.1:5001/get_fiber_content')
       .then(response => {
         setFiberContentValues(response.data.fiber_content_values);
       })
