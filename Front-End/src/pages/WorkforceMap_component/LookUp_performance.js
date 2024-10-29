@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PageMain from "../../components/PageMain";
-import { Button, Box, Typography, Paper, Switch } from "@mui/material";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
 import TextField from "@mui/material/TextField";
 import AddEmployeeModal from "../../components/WorkforceMap/AddEmployeeModal";
 import PerformanceTable from "../../components/WorkforceMap/PerformanceTable";
@@ -27,7 +31,7 @@ const LookUpPerformance = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/data")
+      .get("http://localhost:5010/data")
       .then((response) => {
         setData(response.data);
         setFilteredData(response.data);
@@ -95,7 +99,7 @@ const LookUpPerformance = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/predict",
+        "http://localhost:5010/predict",
         inputData
       );
       setPredictedPerformance(response.data.predicted_next_performance);
@@ -160,7 +164,7 @@ const LookUpPerformance = () => {
     }
 
     axios
-      .post("http://localhost:5000/add_employee", newEmployee)
+      .post("http://localhost:5010/add_employee", newEmployee)
       .then((response) => {
         if (response.data.error) {
           setError(response.data.error);
@@ -176,7 +180,7 @@ const LookUpPerformance = () => {
 
   const handleDownload = () => {
     axios({
-      url: "http://localhost:5000/download",
+      url: "http://localhost:5010/download",
       method: "GET",
       responseType: "blob",
     })
