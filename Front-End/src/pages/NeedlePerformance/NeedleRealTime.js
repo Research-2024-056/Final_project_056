@@ -292,9 +292,7 @@ function NeedleRealTime() {
                 </Typography>
                 <Typography variant="h6">
                   {mainOrder?.NumberOfUnits || "N/A"}
-                  {}
                 </Typography>
-                console.log({mainOrder?.NumberOfUnits || "N/A"})
               </CardContent>
             </Card>
           </Grid>
