@@ -10,10 +10,9 @@ import os
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-# Load the saved model
+
 model = joblib.load('random_forest_model.pkl')
 
-# Load the dataset
 data = pd.read_csv('Employee_Evolution.csv')
 
 # Prediction
@@ -142,7 +141,6 @@ def add_employee():
             writer.writeheader()
         writer.writerow(new_row)
 
-    # Update in-memory data
     data.loc[len(data)] = new_row
 
     return jsonify(new_row)
@@ -189,7 +187,7 @@ def get_employee_performance(emp_no):
 
 # Calculate performance score based on employee evolution data
 def calculate_performance(employee, filter_option):
-    # Convert evolution columns to numeric values, replace non-numeric values with NaN
+  
     evolutions = pd.to_numeric([
         employee['Evolution_01'],
         employee['Evolution_02'],
@@ -203,7 +201,7 @@ def calculate_performance(employee, filter_option):
     evolutions = evolutions[~pd.isna(evolutions)]
     
     if len(evolutions) == 0:
-        return 0  # If there are no valid numeric evolutions, return 0 or handle it as needed
+        return 0  
 
     if filter_option == 'average':
         return sum(evolutions) / len(evolutions)
@@ -268,7 +266,7 @@ def load_assigned_tasks():
 
 @app.route('/delete_task', methods=['POST'])
 def delete_task():
-    task_id = request.json.get('taskId')  # Get task ID from request
+    task_id = request.json.get('taskId') 
     global assigned_tasks
     
     # Find and delete the task
@@ -318,7 +316,7 @@ def get_unassigned_laborers():
 
         # Ensure 'Emp_No' exists
         if 'Emp_No' not in data.columns:
-            return jsonify([])  # Return an empty list if column is missing
+            return jsonify([]) 
 
         # Check if 'Performance' column exists, otherwise calculate it
         if 'Performance' not in data.columns:
@@ -349,7 +347,6 @@ def predict_performance(emp_no):
     predicted_performance = model.predict(input_df)
     
     last_performance = employee['Last_Evolution'].values[0]
-    #print("Prediction and last performance data:", predicted_performance[0], last_performance)
     return jsonify({
     'predicted_performance': predicted_performance[0],
     'Actual_performance': last_performance
