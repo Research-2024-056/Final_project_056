@@ -77,6 +77,7 @@ function WorkLoad() {
   const [needleType, setNeedleType] = useState("");
   const [assemblyType, setAssemblyType] = useState("");
   const [stichpattern, setStichPattern] = useState("");
+  const [sam, setSAM] = useState("");
   const [employee, setEmployee] = useState("");
   const [employees, setEmployees] = useState([]);
 
@@ -86,14 +87,15 @@ function WorkLoad() {
     machineNumber,
     needleType,
     stitchPattern,
-    employee
+    employee,
   ) => {
     if (
       !assemblyType ||
       !machineNumber ||
       !needleType ||
       !stitchPattern ||
-      !employee
+      !employee ||
+      !sam
     ) {
       alert("Please enter all necessary data");
     } else {
@@ -121,6 +123,7 @@ function WorkLoad() {
             assemblyType,
             stitchPattern,
             employee,
+            sam,
           });
           const newDocumentId = newAssemblyOrderRef.key;
 
@@ -158,7 +161,6 @@ function WorkLoad() {
           if (data) {
             const order = Object.values(data)[0]; // Assuming only one order matches
             setOrderData(order);
-            console.log("order", order);
           }
           setLoading(false);
         },
@@ -392,6 +394,17 @@ function WorkLoad() {
           fullWidth
           value={stichpattern}
           onChange={(e) => setStichPattern(e.target.value)}
+          required
+          // Limit the dropdown menu size
+        ></TextField>
+      </Box>
+      <Box sx={{ marginBottom: "20px" }}>
+        <TextField
+          type="number"
+          label="Standard Allowed Minutes (SAM)"
+          fullWidth
+          value={sam}
+          onChange={(e) => setSAM(e.target.value)}
           required
           // Limit the dropdown menu size
         ></TextField>
