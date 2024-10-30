@@ -8,10 +8,9 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import pickle
 
-# Load the trained model
+
 model = joblib.load('ridge_regression_model.pkl')
 
-# Load the polynomial regression model
 
 # Load the pre-trained polynomial regression model
 with open('poly_reg_model1.pkl', 'rb') as file:
@@ -156,4 +155,4 @@ def load_all_thread_data():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=5001, debug=True)
+   app.run(host='0.0.0.0', port=5009, debug=True)

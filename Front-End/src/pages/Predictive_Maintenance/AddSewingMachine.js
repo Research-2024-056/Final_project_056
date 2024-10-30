@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Button, TextField, Grid, Snackbar, Alert } from "@mui/material";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import axios from "axios";
 import PageMain from "../../components/PageMain";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +32,7 @@ export default function AddSewingMachine({ children }) {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "success", // 'success' | 'error' | 'warning' | 'info'
+    severity: "success", 
   });
 
   const handleSnackbarClose = () => {
@@ -61,7 +65,7 @@ export default function AddSewingMachine({ children }) {
       return;
     }
 
-    // Check all fields are filled
+   
     if (
       Brand !== "" &&
       Type !== "" &&
@@ -109,7 +113,7 @@ export default function AddSewingMachine({ children }) {
             message: "Added Successfully",
             severity: "success",
           });
-          // Optionally navigate after a delay
+      
           setTimeout(() => {
             navigate("/SewingDashboard");
           }, 1500);

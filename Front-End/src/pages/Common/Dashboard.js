@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import PageMain from '../../components/PageMain';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
+import PeopleIcon from "@mui/icons-material/People";
 import {
   LineChart,
   Line,
@@ -18,208 +14,313 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import { PieChart } from '@mui/x-charts/PieChart';
-import { BarChart } from '@mui/x-charts/BarChart';
+} from "recharts";
+import axios from "axios";
+import PageMain from "../../components/PageMain";
 
-function Dashboard() {
- 
-  //Workforce map - chart for labor average performance 
+const Dashboard = () => {
   const [evolutionData, setEvolutionData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5010/evolution_averages')
+    axios
+      .get("http://localhost:5010/evolution_averages")
       .then((response) => {
         const data = response.data;
         const formattedData = Object.keys(data).map((key) => ({
           evolution: key,
-          average: parseFloat(data[key]).toFixed(5), 
+          average: parseFloat(data[key]).toFixed(5),
         }));
         setEvolutionData(formattedData);
       })
       .catch((error) => {
-        console.error('Error fetching evolution data', error);
+        console.error("Error fetching evolution data", error);
       });
   }, []);
 
-
-  const uData = [
-    { name: 'Cotton', value: 26.36 },
-    { name: 'Silk', value: 28.17 },
-    { name: 'Polyester', value: 29.73 },
-    { name: 'Nylon', value: 26.01 },
-    { name: 'Rayon', value: 26.88 },
-    { name: 'Wool', value: 27.98 },
-    { name: 'Linen', value: 27.94 },
-  ];
-
   return (
     <PageMain>
-    <Box sx={{ padding: '2rem' }}>
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
-        Main Dashboard
-      </Typography>
+      <Box p={3}>
+        {/* Top Row: Info Cards */}
+        <Box display="flex" justifyContent="space-between" mb={3}>
+          <InfoCard
+            icon={<PeopleIcon fontSize="large" />}
+            count="1259"
+            label="Total Employees"
+            bgColor="#eef2f7"
+            color="#5c6bc0"
+          />
+          <PerformanceCard />
+          <NeedleTypesCard />
+          <FabricCard />
+        </Box>
 
-      {/* Main Card Section */}
-      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 3 }}>
-        {/* Left Side: Most Exported End Use (Pie Chart) */}
-        <Card sx={{ width: 500, boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h6" align="center" sx={{ fontWeight: '500', mb: 2 }}>
-              Most Exported End Use
-            </Typography>
-            <Box display="flex" justifyContent="center">
-              <PieChart
-                series={[{ data: [{ id: 0, value: 30, label: 'Textile' }, { id: 1, value: 25, label: 'Automotive' }, { id: 2, value: 20, label: 'Construction' }, { id: 3, value: 15, label: 'Electronics' }, { id: 4, value: 10, label: 'Home Furnishing' }] }]}
-                width={500}
-                height={230}
-              />
-            </Box>
-          </CardContent>
-        </Card>
-
-        {/* Right Side: Yearly Income (Bar Chart) */}
-        <Card sx={{ width: 500, boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h6" align="center" sx={{ fontWeight: '500', mb: 2 }}>
-              Yearly Income
-            </Typography>
-            <Box display="flex" justifyContent="center">
-              <BarChart
-                xAxis={[{ scaleType: 'band', data: ['2019', '2020', '2021', '2022', '2023'] }]}
-                series={[{ label: 'Income (in millions)', data: [4.2, 5.2, 6.3, 7.1, 8.4] }]}
-                width={450}
-                height={300}
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, mt: 4, paddingLeft:"80px" }}>
-        {/* Fabric Durability Chart */}
-        <Card sx={{ width: '100%', maxWidth: 500, boxShadow: 2 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
-              Commonly Used Fabrics' Durability
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={uData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="value" stroke="#3f51b5" strokeWidth={3} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Workforce Evolution Performance Chart */}
-        <Card sx={{ width: '100%', maxWidth: 500, boxShadow: 2 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
+        {/* Middle Row: Workforce Evolution Performance Chart */}
+        <Box display="flex" justifyContent="space-between" mb={3}>
+          <Paper
+            variant="outlined"
+            sx={{
+              flex: 2,
+              p: 3,
+              mr: 3,
+              borderRadius: 2,
+              boxShadow: 3,
+              bgcolor: "#ffffff",
+            }}
+          >
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ fontWeight: "bold", color: "#3f51b5" }}
+            >
               Average Performance per Evolution
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={evolutionData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="evolution" />
-                <YAxis />
+              <LineChart
+                data={evolutionData}
+                margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis dataKey="evolution" stroke="#616161" />
+                <YAxis stroke="#616161" />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="average" stroke="#3f51b5" strokeWidth={3} dot />
+                <Line
+                  type="monotone"
+                  dataKey="average"
+                  stroke="#3f51b5"
+                  strokeWidth={3}
+                  dot
+                />
               </LineChart>
             </ResponsiveContainer>
-          </CardContent>
-        </Card>
+          </Paper>
+          <MachineCard />
+        </Box>
+
+        {/* Bottom Row: Thread Info */}
+        <ThreadCard />
       </Box>
-
-      {/* Needle Types Section */}
-      <Typography variant="h5" sx={{ fontWeight: '500', mt: 4, mb: 2 }}>
-        Needle Types
-      </Typography>
-{/* Accordion for Needle Types */}
-{['Sewing Needles', 'Medical Needles', 'Specialty Needles', 'Industrial Needles'].map((title, index) => (
-  <Accordion key={index} sx={{ boxShadow: 2, mt: 2, borderRadius: 2 }}>
-    <AccordionSummary 
-      expandIcon={<ExpandMoreIcon />} 
-      aria-controls={`${title}-content`} 
-      id={`${title}-header`}
-    >
-      <Typography sx={{ color: '#008080', fontWeight: 600, fontSize: '1.2rem' }}>{title}</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body1" sx={{ lineHeight: 1.7 }}>
-        {(() => {
-          switch (title) {
-            case 'Sewing Needles':
-              return (
-                <>
-                  <b>Perfect for crafting and stitching garments!</b> These needles come in different types for a variety of fabrics:
-                  <ul style={{ marginLeft: '1.5rem' }}>
-                    <li><b>Universal Needles:</b> A go-to option for most fabrics.</li>
-                    <li><b>Ballpoint Needles:</b> Glide smoothly through stretch fabrics without damage.</li>
-                    <li><b>Jeans/Denim Needles:</b> Strong enough to penetrate heavy fabrics.</li>
-                    <li><b>Embroidery Needles:</b> Feature a larger eye for thicker threads and decorative work.</li>
-                  </ul>
-                </>
-              );
-
-            case 'Medical Needles':
-              return (
-                <>
-                  <b>Essential tools in healthcare and surgical procedures.</b> Different types serve specific medical needs:
-                  <ul style={{ marginLeft: '1.5rem' }}>
-                    <li><b>Hypodermic Needles:</b> For injections and blood withdrawal.</li>
-                    <li><b>Suture Needles:</b> Used in stitching wounds and surgical incisions.</li>
-                    <li><b>Cannula Needles:</b> Provide a fluid pathway for infusion or drainage.</li>
-                    <li><b>Spinal Needles:</b> Administer spinal anesthesia or collect cerebrospinal fluid.</li>
-                  </ul>
-                </>
-              );
-
-            case 'Specialty Needles':
-              return (
-                <>
-                  <b>Crafting and creativity made easier with these specialized tools!</b> Perfect for intricate tasks:
-                  <ul style={{ marginLeft: '1.5rem' }}>
-                    <li><b>Beading Needles:</b> Thin and long, ideal for threading tiny beads.</li>
-                    <li><b>Quilting Needles:</b> Designed for both hand and machine quilting.</li>
-                    <li><b>Leather Needles:</b> Equipped with a triangular point to pierce tough materials.</li>
-                    <li><b>Tattoo Needles:</b> Precision needles used for creating permanent body art.</li>
-                  </ul>
-                </>
-              );
-
-            case 'Industrial Needles':
-              return (
-                <>
-                  <b>Heavy-duty needles for high-performance industries.</b> These specialized needles are built to handle tough tasks:
-                  <ul style={{ marginLeft: '1.5rem' }}>
-                    <li><b>Carpet Needles:</b> Strong enough to sew through thick rugs and carpets.</li>
-                    <li><b>Sail Needles:</b> Designed for stitching sails and canvas materials.</li>
-                    <li><b>Longarm Machine Needles:</b> Ideal for high-speed sewing operations.</li>
-                    <li><b>CNC Machine Needles:</b> Used in automated processes for precision work.</li>
-                  </ul>
-                </>
-              );
-
-            default:
-              return 'Content for this needle type is unavailable.';
-          }
-        })()}
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
-))}
-
-      {/* Charts Section */}
-      
-    </Box>
     </PageMain>
   );
-}
+};
+
+// Employee Performance Card
+const PerformanceCard = () => (
+  <Paper
+    sx={{
+      p: 2,
+      width: "22%",
+      textAlign: "center",
+      borderRadius: 2,
+      boxShadow: 3,
+      bgcolor: "#eef2f7",
+    }}
+  >
+    <Typography variant="h6" color="#5c6bc0">
+      Employee Performance
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      Efficiency Score
+    </Typography>
+    <LinearProgress
+      variant="determinate"
+      value={75}
+      sx={{
+        mt: 2,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: "#e8eaf6",
+        "& .MuiLinearProgress-bar": { backgroundColor: "#4caf50" },
+      }}
+    />
+    <Typography variant="caption" display="block" mt={1} fontWeight="bold">
+      75% Efficiency
+    </Typography>
+  </Paper>
+);
+
+// Needle Types Card
+const NeedleTypesCard = () => (
+  <Paper
+    sx={{
+      p: 2,
+      width: "22%",
+      textAlign: "center",
+      borderRadius: 2,
+      boxShadow: 3,
+      bgcolor: "#eef2f7",
+    }}
+  >
+    <Typography variant="h6" color="#5c6bc0">
+      Needle Types
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      Commonly Used: Ballpoint, Universal
+    </Typography>
+    <Typography variant="caption" display="block" mt={1}>
+      Fine for woven fabrics
+    </Typography>
+  </Paper>
+);
+
+// Fabric Card
+const FabricCard = () => (
+  <Paper
+    sx={{
+      p: 2,
+      width: "22%",
+      textAlign: "center",
+      borderRadius: 2,
+      boxShadow: 3,
+      bgcolor: "#eef2f7",
+    }}
+  >
+    <Typography variant="h6" color="#5c6bc0">
+      Fabric
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      Types: Cotton, Polyester, Silk
+    </Typography>
+    <Typography variant="caption" display="block" mt={1}>
+      Available in multiple blends
+    </Typography>
+  </Paper>
+);
+
+// Machine Information Card
+const MachineCard = () => (
+  <Paper
+    variant="outlined"
+    sx={{
+      flex: 1,
+      p: 4,
+      borderRadius: 3,
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+      bgcolor: "#ffffff",
+      maxWidth: 300,
+      textAlign: "center",
+      position: "relative",
+      overflow: "hidden",
+    }}
+  >
+    <Typography
+      variant="h6"
+      gutterBottom
+      sx={{ color: "#5c6bc0", fontWeight: "bold", mb: 1 }}
+    >
+      Machine Usage
+    </Typography>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      position="relative"
+    >
+      <CircularProgress
+        variant="determinate"
+        value={85}
+        size={120}
+        thickness={5}
+        sx={{ color: "#42a5f5", position: "relative", zIndex: 1 }}
+      />
+      <Typography
+        variant="h4"
+        sx={{
+          position: "absolute",
+          color: "#1e88e5",
+          fontWeight: "bold",
+          zIndex: 2,
+          top: "40%",
+          transform: "translateY(-50%)",
+        }}
+      >
+        85%
+      </Typography>
+      <Typography
+        variant="body2"
+        mt={2}
+        sx={{ color: "#7b8a8f", fontSize: "0.95rem" }}
+      >
+        Machine Efficiency
+      </Typography>
+    </Box>
+    <Typography
+      variant="caption"
+      display="block"
+      mt={2}
+      sx={{
+        color: "#9e9e9e",
+        fontSize: "0.85rem",
+        mt: 3,
+      }}
+    >
+      Includes maintenance schedule
+    </Typography>
+
+    {/* Decorative Background */}
+    <Box
+      sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "linear-gradient(135deg, #e3f2fd 0%, #ffff 100%)",
+        opacity: 0.2,
+        zIndex: 0,
+        borderRadius: 3,
+      }}
+    />
+  </Paper>
+);
+
+// Thread Information Card
+const ThreadCard = () => (
+  <Paper
+    variant="outlined"
+    sx={{ mt: 3, p: 3, borderRadius: 2, boxShadow: 3, bgcolor: "#ffffff" }}
+  >
+    <Typography variant="h6" color="#5c6bc0">
+      Thread Information
+    </Typography>
+    <Typography variant="body2" color="text.secondary" gutterBottom>
+      Common Types: Cotton, Polyester, Nylon
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      Strength and thickness vary based on fabric type.
+    </Typography>
+    <Typography variant="caption" display="block" mt={1} color="text.secondary">
+      Specialized threads for durable stitching
+    </Typography>
+  </Paper>
+);
+
+// Reusable Info Card Component
+const InfoCard = ({ icon, count, label, bgColor, color }) => (
+  <Paper
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: bgColor,
+      color: color,
+      p: 2,
+      width: "22%",
+      textAlign: "center",
+      borderRadius: 2,
+      boxShadow: 3,
+    }}
+  >
+    {icon}
+    <Typography variant="h4" fontWeight="bold">
+      {count}
+    </Typography>
+    <Typography variant="body1" fontWeight="500">
+      {label}
+    </Typography>
+  </Paper>
+);
 
 export default Dashboard;

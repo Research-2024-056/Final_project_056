@@ -3,11 +3,15 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
-import { Button, Typography, Paper, Snackbar, Alert } from "@mui/material";
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom";
 import PageMain from "../../components/PageMain";
 
-// **Import the Delete and Add icons from Material-UI**
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -18,12 +22,12 @@ export default function SewingDashboard({ children }) {
   const [due_swing, setDueSwing] = useState([]);
   const [allMachine, setAllMachine] = useState([]);
 
-  // **State for Snackbar notifications**
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // 'success', 'error', etc.
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); 
 
-  // **Function to fetch all data**
+
   const fetchData = () => {
     axios
       .get("http://localhost:5005/collection/Inventory/working")
@@ -57,16 +61,16 @@ export default function SewingDashboard({ children }) {
   };
 
   useEffect(() => {
-    fetchData(); // Initial data fetch
+    fetchData(); 
 
-    // **Set up interval to fetch data every 5 seconds**
+   
     const intervalId = setInterval(() => {
       fetchData();
-    }, 5000); // 5000 milliseconds = 5 seconds
+    }, 5000); // 5000 milliseconds
 
-    // **Cleanup interval on component unmount**
+
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []); 
 
   const columns = [
     {
@@ -94,17 +98,16 @@ export default function SewingDashboard({ children }) {
       axios
         .post("http://localhost:5005/collection/Inventory/delete", ob)
         .then((res) => {
-          // **Show success snackbar**
+         
           setSnackbarMessage("Deleted Machine");
           setSnackbarSeverity("success");
           setOpenSnackbar(true);
 
-          // **Auto-refresh data**
           fetchData();
         })
         .catch((err) => {
           console.log(err);
-          // **Show error snackbar**
+    
           setSnackbarMessage("Failed to Delete Machine");
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
@@ -134,7 +137,7 @@ export default function SewingDashboard({ children }) {
       status: row.status,
     };
     if (window.confirm("Are you sure you want to replace it?")) {
-      // Send the data to the backend using axios
+
       axios
         .post("http://localhost:5005/predictupdate/Inventory", ob)
         .then((response) => {
@@ -146,17 +149,16 @@ export default function SewingDashboard({ children }) {
           axios
             .post("http://localhost:5005/collection/Inventory/update", ob2)
             .then((res) => {
-              // **Show success snackbar**
+        
               setSnackbarMessage("Replaced Component");
               setSnackbarSeverity("success");
               setOpenSnackbar(true);
 
-              // **Auto-refresh data**
               fetchData();
             })
             .catch((err) => {
               console.log(err);
-              // **Show error snackbar**
+         
               setSnackbarMessage("Failed to Replace Component");
               setSnackbarSeverity("error");
               setOpenSnackbar(true);
@@ -335,7 +337,7 @@ export default function SewingDashboard({ children }) {
     },
   ];
 
-  // **Function to handle closing the Snackbar**
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -346,7 +348,7 @@ export default function SewingDashboard({ children }) {
   return (
     <PageMain title="Dynamic Seat Planner">
       <Box>
-        {/* **Improved Header Section** */}
+        {/* ** Header Section** */}
         <Paper
           elevation={3}
           sx={{
@@ -374,7 +376,7 @@ export default function SewingDashboard({ children }) {
                 color="primary"
                 sx={{ display: "flex", alignItems: "center" }}
                 variant="contained"
-                startIcon={<AddIcon />} // **Add an icon to the button**
+                startIcon={<AddIcon />}
                 onClick={() => navigate("/AddSewingMachine")}
               >
                 Add New
@@ -403,7 +405,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "lightgray", // Updated to light gray
+                  backgroundColor: "lightgray", 
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -451,7 +453,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "lightgray", // Updated to light gray
+                  backgroundColor: "lightgray", 
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {
@@ -516,7 +518,7 @@ export default function SewingDashboard({ children }) {
                   color: "#4f86f7",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "lightgray", // Updated to light gray
+                  backgroundColor: "lightgray", 
                   borderBottom: "none",
                 },
                 "& .MuiDataGrid-virtualScroller": {

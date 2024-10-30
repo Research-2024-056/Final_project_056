@@ -36,13 +36,13 @@ function App() {
     // Function to fetch data from the backend API
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5005/thingspeak/data'); // Replace with your backend API endpoint
-        setData(response.data); // Update state with the fetched data
+        const response = await axios.get('http://localhost:5005/thingspeak/data'); 
+        setData(response.data); 
         console.log(response.data)
         setError(null); // Clear any previous errors
       } catch (err) {
-        setError('Failed to fetch data'); // Update state with the error message
-        console.error(err); // Log the error to the console
+        setError('Failed to fetch data'); 
+        console.error(err);
       }
     };
 
@@ -54,7 +54,7 @@ function App() {
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array to run effect once on mount
+  }, []); 
 
   return (
     <FirebaseProvider>
