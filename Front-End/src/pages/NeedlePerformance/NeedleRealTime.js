@@ -107,7 +107,7 @@ function NeedleRealTime() {
           const data = snapshot.val();
           if (data) {
             setMainOrderData(data);
-            console.log(data)
+            console.log(data);
           } else {
             setError("No main order data found.");
           }
@@ -122,7 +122,7 @@ function NeedleRealTime() {
     fetchData();
     fetchOrderData();
     setLoading(false); // Set loading to false after both calls
-  }, [orderkey, documentid,ordernumber]);
+  }, [orderkey, documentid, ordernumber]);
 
   // Separate useEffect for calculations
   useEffect(() => {
@@ -292,7 +292,9 @@ function NeedleRealTime() {
                 </Typography>
                 <Typography variant="h6">
                   {mainOrder?.NumberOfUnits || "N/A"}
+                  {}
                 </Typography>
+                console.log({mainOrder?.NumberOfUnits || "N/A"})
               </CardContent>
             </Card>
           </Grid>
