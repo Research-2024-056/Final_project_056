@@ -106,7 +106,8 @@ function NeedleRealTime() {
         (snapshot) => {
           const data = snapshot.val();
           if (data) {
-            setMainOrderData(Object.values(data)[0]);
+            setMainOrderData(data);
+            console.log(data);
           } else {
             setError("No main order data found.");
           }
@@ -159,10 +160,15 @@ function NeedleRealTime() {
   const handleEnd = async (e) => {
     e.preventDefault();
     try {
-      const OrderRef = ref(projectFirestore, `/Orders/${orderData[0].docId}`);
+      const OrderRef = ref(
+        projectFirestore,
+        `/Orders/${orderkey}/assemblyOrders/${documentid}`
+      );
       await update(OrderRef, { Started: "false" });
       alert("Order Ended Successfully!");
-      navigate(`/needledashboard/${orderData[0].MachineNumber}`);
+      navigate(
+        `/needledashboard/${orderkey}/${documentid}/${machineNumber}/${ordernumber}`
+      );
     } catch (error) {
       console.error("Error Ending Order:", error.message);
     }
@@ -182,6 +188,8 @@ function NeedleRealTime() {
     );
   const needleCount = orderData.NeedleCount;
   const needleSpeed = orderData.Speed;
+  const machineNumber = orderData.machineNumber;
+  const produceOutput = orderData.activeStreakCountPerMinute / 2;
 
   const warningMessage = getWarningMessage(needleCount);
 
@@ -283,7 +291,7 @@ function NeedleRealTime() {
                   Number of Garments Required
                 </Typography>
                 <Typography variant="h6">
-                  {mainOrder.NumberOfUnits || "N/A"}
+                  {mainOrder?.NumberOfUnits || "N/A"}
                 </Typography>
               </CardContent>
             </Card>
@@ -302,7 +310,7 @@ function NeedleRealTime() {
                   Start Date
                 </Typography>
                 <Typography variant="h6">
-                  {mainOrder.StartDate || "N/A"}
+                  {mainOrder?.StartDate || "N/A"}
                 </Typography>
               </CardContent>
             </Card>
@@ -419,7 +427,7 @@ function NeedleRealTime() {
             </Card>
           </Grid>
           {/* Machine Inactive Time */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Card
               sx={{
                 backgroundColor: "#133E87",
@@ -494,6 +502,46 @@ function NeedleRealTime() {
                 </Typography>
                 <Typography variant="h3" sx={{ fontWeight: "bold" }}>
                   {target}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Producing Output */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#133E87",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Producing Output per Minute
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {produceOutput}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* MachineNumber */}
+          <Grid item xs={12} md={2}>
+            <Card
+              sx={{
+                backgroundColor: "#133E87",
+                color: "#fff",
+                borderRadius: "10px",
+                p: 2,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Machine Number
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+                  {machineNumber}
                 </Typography>
               </CardContent>
             </Card>

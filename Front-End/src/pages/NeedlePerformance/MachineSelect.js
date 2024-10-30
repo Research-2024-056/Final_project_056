@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 
 function MachineSelect() {
+  
   return (
     <PageMain>
       <Typography

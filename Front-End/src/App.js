@@ -110,7 +110,7 @@ function App() {
         />
         <Route exact path="/createneworder" element={<NewOrder></NewOrder>} />
         <Route
-          path="/needledashboard/:orderkey/:documentid/:ordernumber"
+          path="/needledashboard/:orderkey/:documentid/:machineNumber/:ordernumber"
           element={<NeedleDashboard></NeedleDashboard>}
         />
         <Route path="/OrderDetails/:ordernumber" element={<OrderDetails />} />
